@@ -3,6 +3,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, Valid
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from app.models import User
 from wtforms.validators import Regexp
+from flask_wtf.file import FileField, FileAllowed
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
@@ -42,5 +43,9 @@ class AddVisaApplicationForm(FlaskForm):
             DataRequired(),
             Regexp(r'^[A-Z]\d{7}$', message="Passport number must be in the format: A1234567")
         ]
+    )
+    documents = FileField(
+        'Upload Documents',
+        validators=[FileAllowed(['pdf', 'png', 'jpg'], 'PDFs, PNGs, and JPGs only!')]
     )
     submit = SubmitField('Submit')

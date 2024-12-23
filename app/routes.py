@@ -1,10 +1,11 @@
+import os
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, current_user, logout_user, login_required
 from app.models import User, Country, VisaApplication, VisaInfo
 from app.forms import RegistrationForm, LoginForm, AddVisaApplicationForm
 from app import db, bcrypt
 from app.utils import generate_otp, send_otp_via_email
-import pyotp
+import json
 
 bp = Blueprint('main', __name__)
 
@@ -131,21 +132,25 @@ def add_visa_application():
     form.country_id.choices = [(country.id, country.name) for country in Country.query.all()]
 
     if form.validate_on_submit():
+        file_paths = []
+        if 'documents' in request.files:
+            uploaded_file = request.files['documents']
+            if uploaded_file.filename != '':
+                file_path = os.path.join('uploads', uploaded_file.filename)
+                uploaded_file.save(file_path)
+                file_paths.append(file_path)
+
         new_application = VisaApplication(
             user_id=current_user.id,
             country_id=form.country_id.data,
             visa_type=form.visa_type.data,
-            passport_number=form.passport_number.data
+            passport_number=form.passport_number.data,
+            documents=json.dumps(file_paths)  # save as json
         )
         db.session.add(new_application)
         db.session.commit()
         flash('Visa application submitted successfully!', 'success')
         return redirect(url_for('main.visa_status'))
 
-    if form.errors:
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash(f"{field}: {error}", "danger")
-                
     return render_template('add_visa_application.html', form=form)
 

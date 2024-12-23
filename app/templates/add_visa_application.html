@@ -31,6 +31,10 @@
                 </div>
             {% endif %}
             </div>
+            <div class="mb-3">
+                {{ form.documents.label(class="form-label") }}
+                {{ form.documents(class="form-control", type="file", multiple=True) }}
+            </div>
             <button type="submit" class="btn btn-primary">
             <i class="bi bi-send"></i> {{ form.submit.label }}
             </button>

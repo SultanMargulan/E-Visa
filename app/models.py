@@ -35,6 +35,7 @@ class VisaApplication(db.Model):
     country_id = db.Column(db.Integer, db.ForeignKey('country.id'), nullable=False) 
     visa_type = db.Column(db.String(50), nullable=False) 
     passport_number = db.Column(db.String(20), nullable=False) 
+    documents = db.Column(db.Text, nullable=True)  # JSON-строка для хранения списка путей
     application_status = db.Column(db.String(50), nullable=False, default="Pending") 
     submitted_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
