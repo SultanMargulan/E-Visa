@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
+    {% include 'includes/navbar.html' %}
     <div class="container mt-5">
         <h1 class="mb-4">Visa Status</h1>
         <a href="{{ url_for('main.add_visa_application') }}" class="btn btn-primary mb-3">

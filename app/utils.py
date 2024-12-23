@@ -1,5 +1,7 @@
 import pyotp
 from flask_mail import Message
+from flask import abort
+from flask_login import current_user
 from app import mail
 import os
 
@@ -19,3 +21,11 @@ def send_otp_via_email(user, otp_code):
         body=f"Verification code: {otp_code}"
     )
     mail.send(msg)
+
+def admin_required(func):
+    def wrapper(*args, **kwargs):
+        if not current_user.is_admin:
+            abort(403)  # access forbidden
+        return func(*args, **kwargs)
+    wrapper.__name__ = func.__name__
+    return wrapper

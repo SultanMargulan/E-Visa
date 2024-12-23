@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Visa Information</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    {% include 'includes/navbar.html' %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Add Visa Information</h1>
+        <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="country_id" class="form-label">Country</label>
+                <select id="country_id" name="country_id" class="form-control">
+                    {% for country in countries %}
+                    <option value="{{ country.id }}">{{ country.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="visa_type" class="form-label">Visa Type</label>
+                <input type="text" id="visa_type" name="visa_type" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="requirements" class="form-label">Requirements</label>
+                <textarea id="requirements" name="requirements" class="form-control" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="processing_time" class="form-label">Processing Time</label>
+                <input type="text" id="processing_time" name="processing_time" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="cost" class="form-label">Cost</label>
+                <input type="number" step="0.01" id="cost" name="cost" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="vaccinations" class="form-label">Vaccinations</label>
+                <textarea id="vaccinations" name="vaccinations" class="form-control"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="useful_links" class="form-label">Useful Links</label>
+                <textarea id="useful_links" name="useful_links" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Submit
+            </button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

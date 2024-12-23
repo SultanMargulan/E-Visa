@@ -1,0 +1,37 @@
+{% include 'includes/navbar.html' %}
+<h1>Edit Visa Information</h1>
+<form method="POST">
+    <div class="mb-3">
+        <label for="country_id" class="form-label">Country</label>
+        <select id="country_id" name="country_id" class="form-control">
+            {% for country in countries %}
+            <option value="{{ country.id }}" {% if country.id == visa_info.country_id %}selected{% endif %}>{{ country.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="visa_type" class="form-label">Visa Type</label>
+        <input type="text" id="visa_type" name="visa_type" class="form-control" value="{{ visa_info.visa_type }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="requirements" class="form-label">Requirements</label>
+        <textarea id="requirements" name="requirements" class="form-control" required>{{ visa_info.requirements }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="processing_time" class="form-label">Processing Time</label>
+        <input type="text" id="processing_time" name="processing_time" class="form-control" value="{{ visa_info.processing_time }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="cost" class="form-label">Cost</label>
+        <input type="number" step="0.01" id="cost" name="cost" class="form-control" value="{{ visa_info.cost }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="vaccinations" class="form-label">Vaccinations</label>
+        <textarea id="vaccinations" name="vaccinations" class="form-control">{{ visa_info.vaccinations }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="useful_links" class="form-label">Useful Links</label>
+        <textarea id="useful_links" name="useful_links" class="form-control">{{ visa_info.useful_links }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>

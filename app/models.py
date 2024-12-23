@@ -2,6 +2,7 @@ from app import db, login_manager
 from flask_login import UserMixin
 from datetime import datetime
 import pyotp
+from sqlalchemy.orm import relationship
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -13,12 +14,12 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone_number = db.Column(db.String(20), unique=True, nullable=True)  # Increased length to 20
     password = db.Column(db.String(60), nullable=False)
+    is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
 class Country(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
     region = db.Column(db.String(100), nullable=False)
-
 class VisaInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     country_id = db.Column(db.Integer, db.ForeignKey('country.id'), nullable=False)
@@ -28,6 +29,9 @@ class VisaInfo(db.Model):
     cost = db.Column(db.Float, nullable=False)
     vaccinations = db.Column(db.Text)
     useful_links = db.Column(db.Text)
+
+    # relationship with Country table
+    country = relationship('Country', backref='visa_infos')
 
 class VisaApplication(db.Model):
     id = db.Column(db.Integer, primary_key=True)
