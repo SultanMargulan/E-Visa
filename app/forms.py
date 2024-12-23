@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from app.models import User
 from wtforms.validators import Regexp
@@ -11,7 +11,6 @@ class RegistrationForm(FlaskForm):
         'Phone Number',
         validators=[
             DataRequired(),
-            Length(min=10, max=15),
             Regexp(r'^\+7 \(\d{3}\) \d{3} \d{2}-\d{2}$', message="Phone number must be in the format +7 (XXX) XXX XX-XX")
         ]
     )
@@ -34,3 +33,14 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+class AddVisaApplicationForm(FlaskForm):
+    country_id = SelectField('Country', coerce=int, validators=[DataRequired()])
+    visa_type = SelectField('Visa Type', choices=[('Tourist', 'Tourist'), ('Work', 'Work'), ('Student', 'Student')], validators=[DataRequired()])
+    passport_number = StringField(
+        'Passport Number',
+        validators=[
+            DataRequired(),
+            Regexp(r'^[A-Z]\d{7}$', message="Passport number must be in the format: A1234567")
+        ]
+    )
+    submit = SubmitField('Submit')

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, current_user, logout_user, login_required
-from app.models import User, Country, VisaInfo
-from app.forms import RegistrationForm, LoginForm
+from app.models import User, Country, VisaApplication, VisaInfo
+from app.forms import RegistrationForm, LoginForm, AddVisaApplicationForm
 from app import db, bcrypt
 from app.utils import generate_otp, send_otp_via_email
 import pyotp
@@ -11,6 +11,7 @@ bp = Blueprint('main', __name__)
 @bp.route('/')
 def home():
     return render_template('home.html')
+
 # USER LOGIN AND REGISTRATION ROUTES
 @bp.route('/dashboard')
 @login_required
@@ -61,7 +62,6 @@ def login():
             flash('Login unsuccessful. Please check email/phone and password.', 'danger')
     return render_template('login.html', form=form)
 
-
 @bp.route('/verify-otp', methods=['GET', 'POST'])
 def verify_otp():
     user_id = session.get('otp_user_id')
@@ -86,7 +86,6 @@ def verify_otp():
             flash("Invalid OTP. Please try again.", "danger")
 
     return render_template('verify_otp.html')
-
 
 @bp.route('/logout')
 @login_required
@@ -117,4 +116,36 @@ def country_detail(country_id):
     visas = VisaInfo.query.filter_by(country_id=country.id).all()
     return render_template('country_detail.html', country=country, visas=visas)
 
+# VISA APPLICATION ROUTES
+
+@bp.route('/visa-status', methods=['GET'])
+@login_required
+def visa_status():
+    applications = VisaApplication.query.filter_by(user_id=current_user.id).all()
+    return render_template('visa_status.html', applications=applications)
+
+@bp.route('/visa-status/add', methods=['GET', 'POST'])
+@login_required
+def add_visa_application():
+    form = AddVisaApplicationForm()
+    form.country_id.choices = [(country.id, country.name) for country in Country.query.all()]
+
+    if form.validate_on_submit():
+        new_application = VisaApplication(
+            user_id=current_user.id,
+            country_id=form.country_id.data,
+            visa_type=form.visa_type.data,
+            passport_number=form.passport_number.data
+        )
+        db.session.add(new_application)
+        db.session.commit()
+        flash('Visa application submitted successfully!', 'success')
+        return redirect(url_for('main.visa_status'))
+
+    if form.errors:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"{field}: {error}", "danger")
+                
+    return render_template('add_visa_application.html', form=form)
 

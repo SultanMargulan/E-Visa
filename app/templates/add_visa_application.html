@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Visa Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="mb-4">Submit a New Visa Application</h1>
+        <form method="POST" class="needs-validation" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+            {{ form.country_id.label(class="form-label") }}
+            {{ form.country_id(class="form-control") }}
+            </div>
+            <div class="mb-3">
+            {{ form.visa_type.label(class="form-label") }}
+            {{ form.visa_type(class="form-control") }}
+            </div>
+            <div class="mb-3">
+            {{ form.passport_number.label(class="form-label") }}
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-passport"></i></span>
+                {{ form.passport_number(class="form-control") }}
+            </div>
+            {% if form.passport_number.errors %}
+                <div class="text-danger">
+                {{ form.passport_number.errors[0] }}
+                </div>
+            {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">
+            <i class="bi bi-send"></i> {{ form.submit.label }}
+            </button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
+    </div>
+</body>
+</html>
