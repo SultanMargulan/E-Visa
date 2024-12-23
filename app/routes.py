@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, current_user, logout_user, login_required
-from app.models import User
+from app.models import User, Country, VisaInfo
 from app.forms import RegistrationForm, LoginForm
 from app import db, bcrypt
 from app.utils import generate_otp, send_otp_via_email
@@ -11,7 +11,7 @@ bp = Blueprint('main', __name__)
 @bp.route('/')
 def home():
     return render_template('home.html')
-
+# USER LOGIN AND REGISTRATION ROUTES
 @bp.route('/dashboard')
 @login_required
 def dashboard():
@@ -36,8 +36,6 @@ def register():
         flash('Your account has been created! You can now log in.', 'success')
         return redirect(url_for('main.login'))
     return render_template('register.html', form=form)
-
-
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -96,3 +94,27 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.login'))
+
+# COUNTRY ROUTES
+
+@bp.route('/countries')
+def countries():
+    search = request.args.get('search')
+    region = request.args.get('region')
+    query = Country.query
+
+    if search:
+        query = query.filter(Country.name.ilike(f'%{search}%'))
+    if region:
+        query = query.filter(Country.region == region)
+
+    countries = query.all()
+    return render_template('countries.html', countries=countries)
+
+@bp.route('/countries/<int:country_id>')
+def country_detail(country_id):
+    country = Country.query.get_or_404(country_id)
+    visas = VisaInfo.query.filter_by(country_id=country.id).all()
+    return render_template('country_detail.html', country=country, visas=visas)
+
+

@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Country Detail</title>
 </head>
-<body class="bg-light">
+<body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.home') }}">E-Visa System</a>
@@ -19,7 +20,6 @@
                         <a class="nav-link" href="{{ url_for('main.countries') }}">Countries</a>
                     </li>
                     {% if current_user.is_authenticated %}
-                        <!-- If user is logged in -->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('main.dashboard') }}">Profile</a>
                         </li>
@@ -27,7 +27,6 @@
                             <a class="nav-link btn btn-danger text-white" href="{{ url_for('main.logout') }}">Logout</a>
                         </li>
                     {% else %}
-                        <!-- If user is NOT logged in -->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('main.login') }}">Login</a>
                         </li>
@@ -39,26 +38,24 @@
             </div>
         </div>
     </nav>
-
     <div class="container mt-5">
-        <div class="jumbotron bg-white p-5 shadow">
-            <h1 class="display-4 text-center">Welcome to the E-Visa Optimization System</h1>
-            <p class="lead text-center">
-                Streamline your visa application process with our user-friendly platform.
-            </p>
-            <hr class="my-4">
-            {% if current_user.is_authenticated %}
-                <!-- For logged in users -->
-                <div class="text-center">
-                    <a class="btn btn-primary btn-lg" href="{{ url_for('main.dashboard') }}" role="button">Go to Dashboard</a>
-                </div>
-            {% else %}
-                <!-- For unauthorised users -->
-                <div class="text-center">
-                    <a class="btn btn-primary btn-lg" href="{{ url_for('main.register') }}" role="button">Get Started</a>
-                </div>
+        <h1 class="display-4">{{ country.name }}</h1>
+        <p class="lead">Region: {{ country.region }}</p>
+        <h2 class="mt-4">Visa Information</h2>
+        <ul class="list-group">
+            {% if visas %}
+                <li class="list-group-item">
+                    <h5><i class="fas fa-passport"></i> <strong>{{ visas[0].visa_type }}</strong>: {{ visas[0].cost }} USD</h5>
+                    <p><i class="fas fa-file-alt"></i> Requirements: {{ visas[0].requirements }}</p>
+                    <p><i class="fas fa-clock"></i> Processing Time: {{ visas[0].processing_time }}</p>
+                    <p><i class="fas fa-syringe"></i> Vaccinations: {{ visas[0].vaccinations or "None" }}</p>
+                    <a href="{{ visas[0].useful_links }}" class="btn btn-primary"><i class="fas fa-link"></i> Useful Links</a>
+                </li>
             {% endif %}
-        </div>
+        </ul>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

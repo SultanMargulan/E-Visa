@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Countries</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.home') }}">E-Visa System</a>
@@ -19,7 +19,6 @@
                         <a class="nav-link" href="{{ url_for('main.countries') }}">Countries</a>
                     </li>
                     {% if current_user.is_authenticated %}
-                        <!-- If user is logged in -->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('main.dashboard') }}">Profile</a>
                         </li>
@@ -27,7 +26,6 @@
                             <a class="nav-link btn btn-danger text-white" href="{{ url_for('main.logout') }}">Logout</a>
                         </li>
                     {% else %}
-                        <!-- If user is NOT logged in -->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('main.login') }}">Login</a>
                         </li>
@@ -39,26 +37,35 @@
             </div>
         </div>
     </nav>
-
     <div class="container mt-5">
-        <div class="jumbotron bg-white p-5 shadow">
-            <h1 class="display-4 text-center">Welcome to the E-Visa Optimization System</h1>
-            <p class="lead text-center">
-                Streamline your visa application process with our user-friendly platform.
-            </p>
-            <hr class="my-4">
-            {% if current_user.is_authenticated %}
-                <!-- For logged in users -->
-                <div class="text-center">
-                    <a class="btn btn-primary btn-lg" href="{{ url_for('main.dashboard') }}" role="button">Go to Dashboard</a>
-                </div>
-            {% else %}
-                <!-- For unauthorised users -->
-                <div class="text-center">
-                    <a class="btn btn-primary btn-lg" href="{{ url_for('main.register') }}" role="button">Get Started</a>
-                </div>
-            {% endif %}
-        </div>
+        <h1 class="mb-4">Countries</h1>
+        <form method="GET" class="form-inline mb-4">
+            <div class="form-group mr-2">
+                <input type="text" name="search" class="form-control" placeholder="Search for a country">
+            </div>
+            <div class="form-group mr-2">
+                <select name="region" class="form-control">
+                    <option value="">All Regions</option>
+                    <option value="Europe">Europe</option>
+                    <option value="Asia">Asia</option>
+                    <!-- Add more regions -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+        </form>
+        <ul class="list-group">
+            {% for country in countries %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('main.country_detail', country_id=country.id) }}">{{ country.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </body>
 </html>
