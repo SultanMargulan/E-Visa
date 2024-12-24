@@ -9,6 +9,7 @@
 <body class="bg-light">
     {% include 'includes/navbar.html' %}
     <div class="container mt-5">
+        <!-- Главный Jumbotron -->
         <div class="jumbotron bg-white p-5 shadow">
             <h1 class="display-4 text-center">Welcome to the E-Visa Optimization System</h1>
             <p class="lead text-center">
@@ -28,6 +29,65 @@
                     <a class="btn btn-primary btn-lg" href="{{ url_for('main.register') }}" role="button">Get Started</a>
                 </div>
             {% endif %}
+        </div>
+
+        <!-- Информационные карты -->
+        <div class="row mt-5">
+            <!-- Популярные страны -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Popular Destinations</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for country in popular_countries %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ country.name }}
+                                <span class="badge bg-info">{{ country.region }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- О визах -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">About Visas</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Our platform supports <strong>{{ visa_count }}</strong> visa entries with the following types:</p>
+                        <ul class="list-group">
+                            {% for visa_type in visa_types %}
+                            <li class="list-group-item">{{ visa_type }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-5 mb-4">
+            <div class="card-header bg-dark text-white">
+            <h5 class="card-title mb-0">Key Features</h5>
+            </div>
+            <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                <h6>Visa Cost Calculator</h6>
+                <p>Calculate the estimated cost of visa applications with ease.</p>
+                <a href="{{ url_for('main.visa_cost_calculator') }}" class="btn btn-info">Try Now</a>
+                </div>
+                <div class="col-md-6">
+                <h6>Visa Comparison</h6>
+                <p>Compare visa types across different countries to make informed decisions.</p>
+                <a href="{{ url_for('main.visa_comparison') }}" class="btn btn-success">Compare Now</a>
+                </div>
+            </div>
+            </div>
         </div>
     </div>
 </body>

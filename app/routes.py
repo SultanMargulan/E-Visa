@@ -11,7 +11,12 @@ bp = Blueprint('main', __name__)
 
 @bp.route('/')
 def home():
-    return render_template('home.html')
+    popular_countries = db.session.query(Country).join(VisaApplication).group_by(Country.id).order_by(db.func.count(VisaApplication.id).desc()).limit(5).all()
+
+    visa_types = ['Tourist', 'Work', 'Student']
+    visa_count = VisaInfo.query.count()
+
+    return render_template('home.html', popular_countries=popular_countries, visa_types=visa_types, visa_count=visa_count)
 
 # USER LOGIN AND REGISTRATION ROUTES
 @bp.route('/dashboard')
