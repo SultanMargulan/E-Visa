@@ -11,6 +11,13 @@
     {% include 'includes/navbar.html' %}
     <div class="container mt-5">
         <h1 class="display-4">{{ country.name }}</h1>
+        <div class="row mb-4">
+            {% for image in country.images %}
+            <div class="col-md-3">
+                <img src="{{ image.image_url }}" alt="{{ country.name }}" class="img-fluid img-thumbnail">
+            </div>
+            {% endfor %}
+        </div>
         <p class="lead">Region: {{ country.region }}</p>
         <h2 class="mt-4">Visa Information</h2>
         <ul class="list-group">

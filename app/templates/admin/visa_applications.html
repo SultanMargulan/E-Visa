@@ -31,16 +31,18 @@
                     <td>{{ application.application_status }}</td>
                     <td>
                         <form method="POST" action="{{ url_for('main.update_visa_application_status', application_id=application.id) }}" style="display:inline;">
-                            <input type="hidden" name="application_id" value="{{ application.id }}">
-                            <select name="new_status" class="form-select form-select-sm d-inline-block w-auto">
-                                <option value="Pending" {% if application.application_status == 'Pending' %}selected{% endif %}>Pending</option>
-                                <option value="Approved" {% if application.application_status == 'Approved' %}selected{% endif %}>Approved</option>
-                                <option value="Rejected" {% if application.application_status == 'Rejected' %}selected{% endif %}>Rejected</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="fas fa-sync-alt"></i> Update
-                            </button>
-                        </form>
+                            <div class="form-group">
+                                <select name="new_status" class="form-control form-control-sm mb-2">
+                                    <option value="Pending" {% if application.application_status == 'Pending' %}selected{% endif %}>Pending</option>
+                                    <option value="Approved" {% if application.application_status == 'Approved' %}selected{% endif %}>Approved</option>
+                                    <option value="Rejected" {% if application.application_status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <textarea name="notes" class="form-control form-control-sm mb-2" rows="2" placeholder="Add notes here...">{{ application.notes }}</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                        </form>                                                
                     </td>
                 </tr>
                 {% endfor %}

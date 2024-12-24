@@ -22,6 +22,7 @@
                 <thead class="thead-dark">
                     <tr>
                         <th>ID</th>
+                        <th>Images</th>
                         <th>Name</th>
                         <th>Region</th>
                         <th>Actions</th>
@@ -31,7 +32,16 @@
                     {% for country in countries %}
                     <tr>
                         <td>{{ country.id }}</td>
-                        <td>{{ country.name }}</td>
+                        <td>
+                            {% if country.images and country.images|length > 0 %}
+                                <div class="d-flex flex-wrap">
+                                    {% for image in country.images %}
+                                    <img src="{{ image.image_url }}" alt="{{ country.name }}" class="img-thumbnail mr-1 mb-1" style="width: 50px; height: 50px;">
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td><a href="{{ url_for('main.country_detail', country_id=country.id) }}">{{ country.name }}</a></td>
                         <td>{{ country.region }}</td>
                         <td>
                             <div class="btn-group" role="group" aria-label="Actions">
@@ -49,7 +59,7 @@
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
+        </div>        
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

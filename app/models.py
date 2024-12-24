@@ -20,6 +20,15 @@ class Country(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
     region = db.Column(db.String(100), nullable=False)
+
+class CountryImage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    country_id = db.Column(db.Integer, db.ForeignKey('country.id'), nullable=False)
+    image_url = db.Column(db.String(255), nullable=False)
+
+    # relationship with Country table
+    country = db.relationship('Country', backref='images')
+
 class VisaInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     country_id = db.Column(db.Integer, db.ForeignKey('country.id'), nullable=False)
@@ -39,10 +48,11 @@ class VisaApplication(db.Model):
     country_id = db.Column(db.Integer, db.ForeignKey('country.id'), nullable=False) 
     visa_type = db.Column(db.String(50), nullable=False) 
     passport_number = db.Column(db.String(20), nullable=False) 
-    documents = db.Column(db.Text, nullable=True)  # JSON-строка для хранения списка путей
+    documents = db.Column(db.Text, nullable=True)
     application_status = db.Column(db.String(50), nullable=False, default="Pending") 
     submitted_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    notes = db.Column(db.Text, nullable=True)  # notes for visa
+    notes = db.Column(db.Text, nullable=True)
 
     country = db.relationship('Country', backref='visa_applications')
+    user = db.relationship('User', backref='visa_applications')

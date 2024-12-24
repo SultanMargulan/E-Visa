@@ -1,12 +1,13 @@
 import os
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, current_user, logout_user, login_required
-from app.models import User, Country, VisaApplication, VisaInfo
+from app.models import User, Country, VisaApplication, VisaInfo, CountryImage
 from app.forms import RegistrationForm, LoginForm, AddVisaApplicationForm
 from app import db, bcrypt
 from app.utils import generate_otp, send_otp_via_email, admin_required
 import json
 from werkzeug.utils import secure_filename
+from datetime import datetime
 
 bp = Blueprint('main', __name__)
 
@@ -125,7 +126,9 @@ def countries():
 def country_detail(country_id):
     country = Country.query.get_or_404(country_id)
     visas = VisaInfo.query.filter_by(country_id=country.id).all()
-    return render_template('country_detail.html', country=country, visas=visas)
+    images = country.images  # Связанные изображения
+    return render_template('country_detail.html', country=country, visas=visas, images=images)
+
 
 # VISA APPLICATION ROUTES
 
@@ -242,7 +245,7 @@ def admin_countries():
     countries = Country.query.all()
     return render_template('admin/countries.html', countries=countries)
 
-# Adding a new country
+
 @bp.route('/admin/countries/add', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -250,19 +253,27 @@ def add_country():
     if request.method == 'POST':
         name = request.form.get('name')
         region = request.form.get('region')
+        image_url = request.form.get('image_url')  # Получаем URL изображения
 
         if name and region:
+            # Создаём новую страну
             new_country = Country(name=name, region=region)
             db.session.add(new_country)
             db.session.commit()
-            flash('Country added successfully!', 'success')
+
+            # Добавляем изображение, если указано
+            if image_url:
+                new_image = CountryImage(country_id=new_country.id, image_url=image_url)
+                db.session.add(new_image)
+                db.session.commit()
+
+            flash('Country added successfully with image!', 'success')
             return redirect(url_for('main.admin_countries'))
         else:
             flash('Both name and region are required!', 'danger')
 
     return render_template('admin/add_country.html')
 
-# Editing a country
 @bp.route('/admin/countries/edit/<int:country_id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -270,17 +281,37 @@ def edit_country(country_id):
     country = Country.query.get_or_404(country_id)
 
     if request.method == 'POST':
-        country.name = request.form.get('name')
-        country.region = request.form.get('region')
+        name = request.form.get('name')
+        region = request.form.get('region')
+        image_urls = request.form.get('image_urls')  # Получаем ссылки через запятую
 
-        if country.name and country.region:
+        if name and region:
+            country.name = name
+            country.region = region
+
+            # Обновляем изображения
+            if image_urls:
+                # Удаляем старые изображения
+                CountryImage.query.filter_by(country_id=country.id).delete()
+
+                # Добавляем новые изображения
+                for url in image_urls.split(','):
+                    clean_url = url.strip()
+                    if clean_url:
+                        new_image = CountryImage(country_id=country.id, image_url=clean_url)
+                        db.session.add(new_image)
+
             db.session.commit()
             flash('Country updated successfully!', 'success')
             return redirect(url_for('main.admin_countries'))
         else:
             flash('Both name and region are required!', 'danger')
 
-    return render_template('admin/edit_country.html', country=country)
+    # Получаем текущие ссылки на изображения
+    current_image_urls = ', '.join([image.image_url for image in country.images])
+    return render_template('admin/edit_country.html', country=country, image_urls=current_image_urls)
+
+
 
 # Deleting a country
 @bp.route('/admin/countries/delete/<int:country_id>', methods=['POST'])
@@ -293,22 +324,56 @@ def delete_country(country_id):
     flash('Country deleted successfully!', 'success')
     return redirect(url_for('main.admin_countries'))
 
+@bp.route('/admin/countries/<int:country_id>/add-image', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def add_country_image(country_id):
+    country = Country.query.get_or_404(country_id)
+
+    if request.method == 'POST':
+        image_url = request.form.get('image_url')
+
+        if image_url:
+            new_image = CountryImage(country_id=country.id, image_url=image_url)
+            db.session.add(new_image)
+            db.session.commit()
+            flash('Image added successfully!', 'success')
+            return redirect(url_for('main.country_detail', country_id=country.id))
+        else:
+            flash('Image URL is required!', 'danger')
+
+    return render_template('admin/add_country_image.html', country=country)
+
+
 # CRUD для заявок на визу
-@bp.route('/admin/visa-applications', methods=['GET', 'POST'])
+@bp.route('/admin/visa-applications', methods=['GET'])
 @login_required
 @admin_required
 def admin_visa_applications():
     applications = VisaApplication.query.all()
-    if request.method == 'POST':
-        application_id = request.form.get('application_id')
-        new_status = request.form.get('new_status')
-        application = VisaApplication.query.get(application_id)
-        if application:
-            application.application_status = new_status
-            db.session.commit()
-            flash('Application status updated', 'success')
-        return redirect(url_for('main.admin_visa_applications'))
     return render_template('admin/visa_applications.html', applications=applications)
+
+
+@bp.route('/admin/visa-applications/<int:application_id>/update', methods=['POST'])
+@login_required
+@admin_required
+def update_visa_application_status(application_id):
+    application = VisaApplication.query.get_or_404(application_id)
+    new_status = request.form.get('new_status')
+    notes = request.form.get('notes')  # Получаем заметки из формы
+
+    if new_status:
+        application.application_status = new_status
+        application.last_updated_at = datetime.utcnow()
+    
+    if notes is not None:
+        application.notes = notes  # Обновляем заметки
+
+    db.session.commit()
+    flash('Application updated successfully!', 'success')
+    return redirect(url_for('main.admin_visa_applications'))
+
+
 
 # VISA INFO ROUTES FOR ADMIN
 @bp.route('/admin/visa-info', methods=['GET'])
