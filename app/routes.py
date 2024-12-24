@@ -6,6 +6,7 @@ from app.forms import RegistrationForm, LoginForm, AddVisaApplicationForm
 from app import db, bcrypt
 from app.utils import generate_otp, send_otp_via_email, admin_required
 import json
+from werkzeug.utils import secure_filename
 
 bp = Blueprint('main', __name__)
 
@@ -113,8 +114,12 @@ def countries():
     if region:
         query = query.filter(Country.region == region)
 
+    # extracting unique regions
+    regions = db.session.query(Country.region).distinct().all()
+    regions = [r[0] for r in regions if r[0]]
+
     countries = query.all()
-    return render_template('countries.html', countries=countries)
+    return render_template('countries.html', countries=countries, regions=regions)
 
 @bp.route('/countries/<int:country_id>')
 def country_detail(country_id):
@@ -127,37 +132,79 @@ def country_detail(country_id):
 @bp.route('/visa-status', methods=['GET'])
 @login_required
 def visa_status():
-    applications = VisaApplication.query.filter_by(user_id=current_user.id).all()
-    return render_template('visa_status.html', applications=applications)
+    visa_applications = VisaApplication.query.filter_by(user_id=current_user.id).order_by(VisaApplication.submitted_at.asc()).all()
+    processed_applications = []
+
+    for app in visa_applications:
+        # Декодируем документы
+        try:
+            documents = json.loads(app.documents) if app.documents else []
+        except json.JSONDecodeError:
+            documents = []
+
+        # Обрабатываем данные заявки
+        processed_applications.append({
+            'id': app.id,
+            'status': app.application_status,
+            'submitted_at': app.submitted_at,  # Передаём объект datetime
+            'last_updated_at': app.last_updated_at,  # Передаём объект datetime
+            'country': app.country.name if app.country else "Unknown",  # Проверяем связь с Country
+            'visa_type': app.visa_type,
+            'passport_number': app.passport_number,
+            'documents': documents,
+            'notes': app.notes or "No notes available"
+        })
+
+    return render_template('visa_status.html', applications=processed_applications)
+
+
+
+
+UPLOAD_FOLDER = './app/uploads'
+ALLOWED_EXTENSIONS = {'pdf'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @bp.route('/visa-status/add', methods=['GET', 'POST'])
 @login_required
 def add_visa_application():
+    # Загружаем список стран из базы данных
+    countries = [(country.id, country.name) for country in Country.query.all()]
+
+    # Создаём форму и задаём список стран для выбора
     form = AddVisaApplicationForm()
-    form.country_id.choices = [(country.id, country.name) for country in Country.query.all()]
+    form.country_id.choices = countries
 
-    if form.validate_on_submit():
-        file_paths = []
-        if 'documents' in request.files:
-            uploaded_file = request.files['documents']
-            if uploaded_file.filename != '':
-                file_path = os.path.join('uploads', uploaded_file.filename)
-                uploaded_file.save(file_path)
-                file_paths.append(file_path)
+    if request.method == 'POST' and form.validate_on_submit():
+        # Обработка файла
+        file = request.files.get('documents')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            upload_path = os.path.join(UPLOAD_FOLDER, filename)
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+            file.save(upload_path)
 
-        new_application = VisaApplication(
-            user_id=current_user.id,
-            country_id=form.country_id.data,
-            visa_type=form.visa_type.data,
-            passport_number=form.passport_number.data,
-            documents=json.dumps(file_paths)  # save as json
-        )
-        db.session.add(new_application)
-        db.session.commit()
-        flash('Visa application submitted successfully!', 'success')
-        return redirect(url_for('main.visa_status'))
+            # Сохранение заявки
+            new_application = VisaApplication(
+                user_id=current_user.id,
+                country_id=form.country_id.data,
+                visa_type=form.visa_type.data,
+                passport_number=form.passport_number.data,
+                documents=json.dumps([upload_path]),
+                application_status='Pending'
+            )
+            db.session.add(new_application)
+            db.session.commit()
+
+            flash('Visa application submitted successfully!', 'success')
+            return redirect(url_for('main.visa_status'))
+        else:
+            flash('Invalid file type or no file uploaded. Only PDFs, PNGs, and JPGs are allowed.', 'danger')
 
     return render_template('add_visa_application.html', form=form)
+
+
 
 # ADMIN ROUTES
 

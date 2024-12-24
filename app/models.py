@@ -44,3 +44,5 @@ class VisaApplication(db.Model):
     submitted_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     notes = db.Column(db.Text, nullable=True)  # notes for visa
+
+    country = db.relationship('Country', backref='visa_applications')

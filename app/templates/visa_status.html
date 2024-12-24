@@ -21,6 +21,10 @@
                     <th>Status</th>
                     <th>Submitted At</th>
                     <th>Last Updated</th>
+                    <th>Country</th>
+                    <th>Visa Type</th>
+                    <th>Passport Number</th>
+                    <th>Documents</th>
                     <th>Notes</th>
                 </tr>
             </thead>
@@ -29,16 +33,30 @@
                 <tr>
                     <td>{{ application.id }}</td>
                     <td>
-                        {% if application.application_status == 'Approved' %}
-                            <span class="badge badge-success">{{ application.application_status }}</span>
-                        {% elif application.application_status == 'Pending' %}
-                            <span class="badge badge-warning">{{ application.application_status }}</span>
+                        {% if application.status == 'Approved' %}
+                            <span class="badge badge-success">{{ application.status }}</span>
+                        {% elif application.status == 'Pending' %}
+                            <span class="badge badge-warning">{{ application.status }}</span>
                         {% else %}
-                            <span class="badge badge-danger">{{ application.application_status }}</span>
+                            <span class="badge badge-danger">{{ application.status }}</span>
                         {% endif %}
-                    </td>
+                    </td>         
                     <td>{{ application.submitted_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                    <td>{{ application.last_updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>{{ application.last_updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>                
+                    <td>{{ application.country }}</td>
+                    <td>{{ application.visa_type }}</td>
+                    <td>{{ application.passport_number }}</td>
+                    <td>
+                        {% if application.documents %}
+                            {% for document in application.documents %}
+                            <a href="{{ document }}" target="_blank">
+                                <i class="fas fa-file"></i> {{ document.split('/')[-1] }}
+                            </a><br>
+                            {% endfor %}
+                        {% else %}
+                            <span>No documents uploaded</span>
+                        {% endif %}
+                    </td>                    
                     <td>{{ application.notes or 'No notes available' }}</td>
                 </tr>
                 {% endfor %}

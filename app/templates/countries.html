@@ -17,11 +17,14 @@
             <div class="form-group mr-2">
                 <select name="region" class="form-control">
                     <option value="">All Regions</option>
-                    <option value="Europe">Europe</option>
-                    <option value="Asia">Asia</option>
-                    <!-- Add more regions -->
+                    {% set selected_region = request.args.get('region') %}
+                    {% for region in regions %}
+                        <option value="{{ region }}" {% if selected_region == region %}selected{% endif %}>
+                            {{ region }}
+                        </option>
+                    {% endfor %}
                 </select>
-            </div>
+            </div>            
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-filter"></i> Filter
             </button>
