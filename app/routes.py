@@ -325,3 +325,41 @@ def delete_visa_info(visa_info_id):
     db.session.commit()
     flash('Visa information deleted successfully', 'success')
     return redirect(url_for('main.admin_visa_info'))
+
+# VISA COST CALCULATOR
+@bp.route('/visa-cost-calculator', methods=['GET', 'POST'])
+def visa_cost_calculator():
+    countries = Country.query.all()
+    visa_types = ['Tourist', 'Work', 'Student']
+    visa_info = None
+    total_cost = None
+
+    if request.method == 'POST':
+        country_id = request.form.get('country_id')
+        visa_type = request.form.get('visa_type')
+        num_applicants = int(request.form.get('num_applicants', 1))
+
+        visa_info = VisaInfo.query.filter_by(country_id=country_id, visa_type=visa_type).first()
+        if visa_info:
+            total_cost = visa_info.cost * num_applicants
+
+    return render_template('visa_cost_calculator.html', countries=countries, visa_types=visa_types, visa_info=visa_info, total_cost=total_cost)
+
+# VISA COMPARISON
+@bp.route('/visa-comparison', methods=['GET', 'POST'])
+def visa_comparison():
+    countries = Country.query.all()
+    visa_types = ['Tourist', 'Work', 'Student']
+    visa_info_1 = None
+    visa_info_2 = None
+
+    if request.method == 'POST':
+        country_id_1 = request.form.get('country_id_1')
+        visa_type_1 = request.form.get('visa_type_1')
+        country_id_2 = request.form.get('country_id_2')
+        visa_type_2 = request.form.get('visa_type_2')
+
+        visa_info_1 = VisaInfo.query.filter_by(country_id=country_id_1, visa_type=visa_type_1).first()
+        visa_info_2 = VisaInfo.query.filter_by(country_id=country_id_2, visa_type=visa_type_2).first()
+
+    return render_template('visa_comparison.html', countries=countries, visa_types=visa_types, visa_info_1=visa_info_1, visa_info_2=visa_info_2)

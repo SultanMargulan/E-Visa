@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Comparison</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    {% include 'includes/navbar.html' %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Visa Comparison</h1>
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="country_id_1" class="form-label">Country 1</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                        <select id="country_id_1" name="country_id_1" class="form-control">
+                            {% for country in countries %}
+                            <option value="{{ country.id }}">{{ country.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="visa_type_1" class="form-label">Visa Type 1</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                        <select id="visa_type_1" name="visa_type_1" class="form-control" required>
+                            {% for visa_type in visa_types %}
+                            <option value="{{ visa_type }}">{{ visa_type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="country_id_2" class="form-label">Country 2</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                        <select id="country_id_2" name="country_id_2" class="form-control">
+                            {% for country in countries %}
+                            <option value="{{ country.id }}">{{ country.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="visa_type_2" class="form-label">Visa Type 2</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                        <select id="visa_type_2" name="visa_type_2" class="form-control" required>
+                            {% for visa_type in visa_types %}
+                            <option value="{{ visa_type }}">{{ visa_type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Compare</button>
+        </form>
+        {% if visa_info_1 and visa_info_2 %}
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Attribute</th>
+                    <th>Visa 1</th>
+                    <th>Visa 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cost</td>
+                    <td>{{ visa_info_1.cost }}</td>
+                    <td>{{ visa_info_2.cost }}</td>
+                </tr>
+                <tr>
+                    <td>Processing Time</td>
+                    <td>{{ visa_info_1.processing_time }}</td>
+                    <td>{{ visa_info_2.processing_time }}</td>
+                </tr>
+                <tr>
+                    <td>Requirements</td>
+                    <td>{{ visa_info_1.requirements }}</td>
+                    <td>{{ visa_info_2.requirements }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
