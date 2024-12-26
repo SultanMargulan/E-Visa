@@ -24,3 +24,6 @@ MAIL_PASSWORD=<your_app_password>
 (in order to make email 2FA work, go into your gmail account and enable 2FA, then create an app password)
 7. flask run - to run the server and the web application
 8. you are all set!
+
+
+credits to Sultan Margulan, Yernur Zhumanov
