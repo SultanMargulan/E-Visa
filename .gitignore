@@ -4,4 +4,4 @@ __pycache__/
 *.pyo
 instance/
 .env
-/app/uploads/
+/app/uploads/*
