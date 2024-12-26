@@ -5,12 +5,12 @@ from app.models import User
 app = create_app()
 with app.app_context():
     # Hash the password
-    hashed_password = bcrypt.generate_password_hash("12345678").decode('utf-8')
+    hashed_password = bcrypt.generate_password_hash("<your_admin_password>").decode('utf-8')
 
     # Create the admin user
     admin_user = User(
-        username='admin',
-        email='yernurzhumanov.v1@gmail.com',
+        username='<admin_username>',
+        email='<your_admin_email>',
         password=hashed_password,
         is_admin=True
     )

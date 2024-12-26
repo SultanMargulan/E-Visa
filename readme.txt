@@ -22,8 +22,11 @@ MAIL_USE_TLS=True
 MAIL_USERNAME=<your_gmail>
 MAIL_PASSWORD=<your_app_password>
 (in order to make email 2FA work, go into your gmail account and enable 2FA, then create an app password)
+7. open up the admin_user.py file and change the email and password fields as needed. then, run the following command to create an admin user:
+python admin_user.py
 7. flask run - to run the server and the web application
 8. you are all set!
 
+(if you have problems with python commands, try typing python3 instead of python)
 
 credits to Sultan Margulan, Yernur Zhumanov
