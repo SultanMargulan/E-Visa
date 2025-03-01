@@ -1,45 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countries</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    {% include 'includes/navbar.html' %}
-    <div class="container mt-5">
-        <h1 class="mb-4">Countries</h1>
-        <form method="GET" class="form-inline mb-4">
-            <div class="form-group mr-2">
-                <input type="text" name="search" class="form-control" placeholder="Search for a country">
-            </div>
-            <div class="form-group mr-2">
-                <select name="region" class="form-control">
-                    <option value="">All Regions</option>
-                    {% set selected_region = request.args.get('region') %}
-                    {% for region in regions %}
-                        <option value="{{ region }}" {% if selected_region == region %}selected{% endif %}>
-                            {{ region }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>            
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-filter"></i> Filter
-            </button>
-        </form>
-        <ul class="list-group">
-            {% for country in countries %}
-                <li class="list-group-item">
-                    <a href="{{ url_for('main.country_detail', country_id=country.id) }}">{{ country.name }}</a>
-                </li>
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Countries</h1>
+    <form method="GET" class="form-inline mb-4">
+        <div class="form-group mr-2" style="max-width: 30%;">
+            <input type="text" name="search" class="form-control" placeholder="Search for a country" style="width: 100%;">
+        </div>
+        <div class="form-group mr-2 mt-2" style="max-width: 30%;">
+            <select name="region" class="form-control" style="width: 100%;">
+            <option value="">All Regions</option>
+            {% set selected_region = request.args.get('region') %}
+            {% for region in regions %}
+                <option value="{{ region }}" {% if selected_region == region %}selected{% endif %}>
+                {{ region }}
+                </option>
             {% endfor %}
-        </ul>
+            </select>
+        </div>            
+        <button type="submit" class="btn btn-primary mt-2">
+            <i class="fas fa-filter"></i> Filter
+        </button>
+    </form>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for country in countries %}
+        <div class="col">
+            <div class="card h-100">
+                <img src="{{ country.images[0].image_url if country.images else 'fallback.jpg' }}" class="card-img-top" alt="{{ country.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ country.name }}</h5>
+                    <p class="card-text">{{ country.region }}</p>
+                    <a href="{{ url_for('main.country_detail', country_id=country.id) }}" class="btn btn-primary">Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-</body>
-</html>
+    
+</div>
+{% endblock %}

@@ -215,7 +215,28 @@ def add_visa_application():
 @login_required
 @admin_required
 def admin_dashboard():
-    return render_template('admin/dashboard.html')
+    user_count = User.query.count()
+    country_count = Country.query.count()
+    visa_app_count = VisaApplication.query.count()
+    visa_info_count = VisaInfo.query.count()
+
+    # For statuses
+    pending_count = VisaApplication.query.filter_by(application_status='Pending').count()
+    approved_count = VisaApplication.query.filter_by(application_status='Approved').count()
+    rejected_count = VisaApplication.query.filter_by(application_status='Rejected').count()
+
+    return render_template(
+        'admin/dashboard.html',
+        user=current_user,  # Pass the current user so template can use user.username
+        user_count=user_count,
+        country_count=country_count,
+        visa_app_count=visa_app_count,
+        visa_info_count=visa_info_count,
+        pending_count=pending_count,
+        approved_count=approved_count,
+        rejected_count=rejected_count
+    )
+
 
 # CRUD для пользователей
 @bp.route('/admin/users', methods=['GET', 'POST'])

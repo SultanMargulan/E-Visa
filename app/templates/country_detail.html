@@ -1,39 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <title>Country Detail</title>
-</head>
-<body>
-    {% include 'includes/navbar.html' %}
+{% extends "base.html" %}
+{% block content %}
     <div class="container mt-5">
         <h1 class="display-4">{{ country.name }}</h1>
-        <div class="row mb-4">
-            {% for image in country.images %}
-            <div class="col-md-3">
-                <img src="{{ image.image_url }}" alt="{{ country.name }}" class="img-fluid img-thumbnail">
+        <div id="countryImages" class="carousel slide mb-4" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for image in country.images %}
+                <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
+                    <img src="{{ image.image_url }}" class="d-block w-100 img-fluid responsive-img" alt="...">
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#countryImages" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#countryImages" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
         <p class="lead">Region: {{ country.region }}</p>
         <h2 class="mt-4">Visa Information</h2>
-        <ul class="list-group">
-            {% if visas %}
-                <li class="list-group-item">
-                    <h5><i class="fas fa-passport"></i> <strong>{{ visas[0].visa_type }}</strong>: {{ visas[0].cost }} USD</h5>
-                    <p><i class="fas fa-file-alt"></i> Requirements: {{ visas[0].requirements }}</p>
-                    <p><i class="fas fa-clock"></i> Processing Time: {{ visas[0].processing_time }}</p>
-                    <p><i class="fas fa-syringe"></i> Vaccinations: {{ visas[0].vaccinations or "None" }}</p>
-                    <a href="{{ visas[0].useful_links }}" class="btn btn-primary"><i class="fas fa-link"></i> Useful Links</a>
-                </li>
-            {% endif %}
-        </ul>
+        <div class="card mt-4" style="max-width: 600px;">
+            <div class="card-header">
+            <h5><i class="fas fa-passport"></i> {{ visas[0].visa_type }}</h5>
+            </div>
+            <div class="card-body">
+            <p><i class="fas fa-file-alt"></i> {{ visas[0].requirements }}</p>
+            <p><i class="fas fa-clock"></i> {{ visas[0].processing_time }}</p>
+            <p><i class="fas fa-syringe"></i> {{ visas[0].vaccinations or "None" }}</p>
+            <a href="{{ visas[0].useful_links }}" class="btn btn-primary"><i class="fas fa-link"></i> More Info</a>
+            </div>
+        </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+
+    <style>
+        .responsive-img {
+            height: 80vh;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .responsive-img {
+                height: 50vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .responsive-img {
+                height: 40vh;
+            }
+        }
+    </style>
+    {% endblock %}

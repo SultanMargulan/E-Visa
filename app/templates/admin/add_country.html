@@ -1,31 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Country</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-    {% include 'includes/navbar.html' %}
-    <div class="container">
-        <h1 class="my-4">Add Country</h1>
-        <form method="POST">
-            <div class="mb-3">
-                <label for="image_url" class="form-label">Image URL</label>
-                <input type="text" id="image_url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
-            </div>                        
-            <div class="mb-3">
-                <label for="name" class="form-label">Country Name</label>
-                <input type="text" id="name" name="name" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="region" class="form-label">Region</label>
-                <input type="text" id="region" name="region" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Country</button>
-            <a href="{{ url_for('main.admin_countries') }}" class="btn btn-secondary">Cancel</a>
-        </form>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="my-4">Add Country</h1>
+  <form method="POST">
+    <div class="mb-3">
+      <label for="image_url" class="form-label">Image URL</label>
+      <input type="text" id="image_url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
+    </div>                        
+    <div class="mb-3">
+      <label for="name" class="form-label">Country Name</label>
+      <input type="text" id="name" name="name" class="form-control" required>
     </div>
-</body>
-</html>
+    <div class="mb-3">
+      <label for="region" class="form-label">Region</label>
+      <input type="text" id="region" name="region" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Country</button>
+    <a href="{{ url_for('main.admin_countries') }}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

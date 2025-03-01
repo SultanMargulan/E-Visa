@@ -1,54 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Visa Information</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-</head>
-<body>
-    {% include 'includes/navbar.html' %}
-    <div class="container mt-5">
-        <h1 class="mb-4">Edit Visa Information</h1>
-        <form method="POST">
-            <div class="form-group">
-                <label for="country_id" class="form-label">Country</label>
-                <select id="country_id" name="country_id" class="form-control">
-                    {% for country in countries %}
-                    <option value="{{ country.id }}" {% if country.id == visa_info.country_id %}selected{% endif %}>{{ country.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="visa_type" class="form-label">Visa Type</label>
-                <input type="text" id="visa_type" name="visa_type" class="form-control" value="{{ visa_info.visa_type }}" required>
-            </div>
-            <div class="form-group">
-                <label for="requirements" class="form-label">Requirements</label>
-                <textarea id="requirements" name="requirements" class="form-control" required>{{ visa_info.requirements }}</textarea>
-            </div>
-            <div class="form-group">
-                <label for="processing_time" class="form-label">Processing Time</label>
-                <input type="text" id="processing_time" name="processing_time" class="form-control" value="{{ visa_info.processing_time }}" required>
-            </div>
-            <div class="form-group">
-                <label for="cost" class="form-label">Cost</label>
-                <input type="number" step="0.01" id="cost" name="cost" class="form-control" value="{{ visa_info.cost }}" required>
-            </div>
-            <div class="form-group">
-                <label for="vaccinations" class="form-label">Vaccinations</label>
-                <textarea id="vaccinations" name="vaccinations" class="form-control">{{ visa_info.vaccinations }}</textarea>
-            </div>
-            <div class="form-group">
-                <label for="useful_links" class="form-label">Useful Links</label>
-                <textarea id="useful_links" name="useful_links" class="form-control">{{ visa_info.useful_links }}</textarea>
-            </div>
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update</button>
-        </form>
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Edit Visa Information</h1>
+  <form method="POST">
+    <div class="mb-3">
+      <label for="country_id" class="form-label">Country</label>
+      <select id="country_id" name="country_id" class="form-control">
+        {% for country in countries %}
+        <option value="{{ country.id }}" {% if country.id == visa_info.country_id %}selected{% endif %}>{{ country.name }}</option>
+        {% endfor %}
+      </select>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+    <div class="mb-3">
+      <label for="visa_type" class="form-label">Visa Type</label>
+      <input type="text" id="visa_type" name="visa_type" class="form-control" value="{{ visa_info.visa_type }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="requirements" class="form-label">Requirements</label>
+      <textarea id="requirements" name="requirements" class="form-control" required>{{ visa_info.requirements }}</textarea>
+    </div>
+    <div class="mb-3">
+      <label for="processing_time" class="form-label">Processing Time</label>
+      <input type="text" id="processing_time" name="processing_time" class="form-control" value="{{ visa_info.processing_time }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="cost" class="form-label">Cost</label>
+      <input type="number" step="0.01" id="cost" name="cost" class="form-control" value="{{ visa_info.cost }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="vaccinations" class="form-label">Vaccinations</label>
+      <textarea id="vaccinations" name="vaccinations" class="form-control">{{ visa_info.vaccinations }}</textarea>
+    </div>
+    <div class="mb-3">
+      <label for="useful_links" class="form-label">Useful Links</label>
+      <textarea id="useful_links" name="useful_links" class="form-control">{{ visa_info.useful_links }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update</button>
+  </form>
+</div>
+{% endblock %}

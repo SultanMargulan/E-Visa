@@ -1,0 +1,375 @@
+#vanta-bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1; /* Keep it behind other elements */
+}
+.btn:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+}
+.dark-mode {
+  --background-color: #343a40;
+  --text-color: #f8f9fa;
+}
+
+/* Dark Mode Overrides */
+body.dark-mode {
+  background-color: #343a40 !important; /* Dark background */
+  color: #f8f9fa !important;            /* Light text */
+}
+
+/* Ensure links look good */
+body.dark-mode a {
+  color: #f8f9fa !important;
+}
+
+/* Navbar: override the default primary background */
+body.dark-mode .navbar {
+  background-color: #212529 !important; /* Darker navbar */
+}
+
+body.dark-mode .navbar a {
+  color: #f8f9fa !important;
+}
+
+/* Cards: update background and text */
+body.dark-mode .card {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+}
+
+/* Tables: adjust backgrounds and text */
+body.dark-mode .table {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+}
+
+body.dark-mode .table thead {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+}
+
+/* Buttons: ensure primary buttons remain consistent */
+body.dark-mode .btn-primary {
+  background-color: #0a74da !important;
+  border-color: #0a74da !important;
+  color: #f8f9fa !important;
+}
+
+/* Other buttons can also be tweaked if needed */
+body.dark-mode .btn,
+body.dark-mode .btn-outline-secondary {
+  color: #f8f9fa !important;
+  border-color: #f8f9fa !important;
+}
+
+/* Footer: ensure a consistent dark look */
+body.dark-mode footer {
+  background-color: #212529 !important;
+  color: #f8f9fa !important;
+}
+
+/* Dark Mode Global Overrides */
+body.dark-mode {
+  background-color: #343a40 !important; /* Dark background */
+  color: #f8f9fa !important;            /* Light text */
+}
+
+/* Links */
+body.dark-mode a {
+  color: #f8f9fa !important;
+}
+
+/* Navbar Overrides */
+body.dark-mode .navbar {
+  background-color: #212529 !important; /* A darker shade for the navbar */
+}
+body.dark-mode .navbar .nav-link,
+body.dark-mode .navbar-brand {
+  color: #f8f9fa !important;
+}
+
+/* Jumbotron */
+body.dark-mode .jumbotron,
+body.dark-mode .bg-white.jumbotron {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+}
+
+/* Cards */
+body.dark-mode .card {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .card-header {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+}
+
+/* Forms: Inputs, Textareas, and Input Groups */
+body.dark-mode .form-control {
+  background-color: #495057 !important;
+  border-color: #6c757d !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .form-control:focus {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+  border-color: #0a74da !important;
+}
+body.dark-mode .input-group-text {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+  border-color: #6c757d !important;
+}
+
+/* Buttons */
+body.dark-mode .btn-primary {
+  background-color: #0a74da !important;
+  border-color: #0a74da !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .btn-secondary {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .btn-danger {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .btn-outline-secondary {
+  color: #f8f9fa !important;
+  border-color: #f8f9fa !important;
+}
+
+body.dark-mode .display-4 {
+  color: #f8f9fa !important;
+}
+body.dark-mode .lead {
+  color: #f8f9fa !important;
+}
+body.dark-mode .text-muted {
+  color: #adb5bd !important; /* Slightly lighter than pure white, but still readable */
+}
+
+/* Tables */
+body.dark-mode .table {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .table thead th {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #495057 !important;
+}
+
+/* Carousel Controls */
+body.dark-mode .carousel-control-prev-icon,
+body.dark-mode .carousel-control-next-icon {
+  filter: invert(1) !important;  /* Invert colors so controls are visible on dark backgrounds */
+}
+
+/* Footer */
+body.dark-mode footer {
+  background-color: #212529 !important;
+  color: #f8f9fa !important;
+}
+
+/* Optional: Tooltip adjustments (if needed) */
+body.dark-mode .tooltip-inner {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+}
+
+/* 
+  GLOBAL: 
+  Already sets body background & text color. 
+  Keep or adjust as you prefer.
+*/
+body.dark-mode {
+  background-color: #343a40 !important; /* Main dark background */
+  color: #f8f9fa !important;            /* Light text */
+}
+
+/* Make sure all links appear clearly in dark mode */
+body.dark-mode a {
+  color: #f8f9fa !important;
+}
+
+/* 
+  NAVBAR & HEADERS 
+  - You have a .navbar-dark.bg-primary in some places 
+  - Also possible .bg-dark or .bg-success for headers 
+*/
+body.dark-mode .navbar {
+  background-color: #212529 !important;
+}
+body.dark-mode .navbar .nav-link,
+body.dark-mode .navbar-brand {
+  color: #f8f9fa !important;
+}
+
+/* For any .bg-primary elements (like card headers) */
+body.dark-mode .bg-primary {
+  background-color: #0a74da !important;
+  color: #f8f9fa !important;
+}
+/* For .bg-success elements */
+body.dark-mode .bg-success {
+  background-color: #198754 !important;
+  color: #f8f9fa !important;
+}
+/* For .bg-dark elements */
+body.dark-mode .bg-dark {
+  background-color: #212529 !important;
+  color: #f8f9fa !important;
+}
+/* For .bg-warning, .bg-danger if you use them as backgrounds */
+body.dark-mode .bg-warning {
+  background-color: #ffc107 !important; 
+  color: #343a40 !important;
+}
+body.dark-mode .bg-danger {
+  background-color: #dc3545 !important; 
+  color: #f8f9fa !important;
+}
+
+/*
+  BUTTONS
+  - You have .btn-primary, .btn-info, .btn-success, .btn-danger, etc.
+  - Also .btn-outline-secondary for your Dark Mode toggle
+*/
+body.dark-mode .btn-primary {
+  background-color: #0a74da !important;
+  border-color: #0a74da !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .btn-success {
+  background-color: #198754 !important;
+  border-color: #198754 !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .btn-info {
+  background-color: #0dcaf0 !important;
+  border-color: #0dcaf0 !important;
+  color: #343a40 !important; /* If you prefer a dark text on the bright info color */
+}
+body.dark-mode .btn-danger {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #f8f9fa !important;
+}
+/* Outline button (like your Dark Mode toggle) */
+body.dark-mode .btn-outline-secondary {
+  background-color: transparent !important;
+  color: #f8f9fa !important;
+  border-color: #f8f9fa !important;
+}
+body.dark-mode .btn-outline-secondary:hover {
+  background-color: #f8f9fa !important; 
+  color: #343a40 !important;
+}
+
+/* 
+  CARDS 
+*/
+body.dark-mode .card {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .card-header {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+}
+
+/*
+  LIST GROUPS 
+  - e.g. .list-group, .list-group-item for "Popular Destinations"
+*/
+body.dark-mode .list-group-item {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+  border-color: #6c757d !important;
+}
+
+/* 
+  BADGES (e.g., .badge.bg-success, .badge.bg-warning, .badge.bg-danger) 
+  - These might already look OK, but you can override if needed
+*/
+body.dark-mode .badge.bg-success {
+  background-color: #198754 !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .badge.bg-warning {
+  background-color: #ffc107 !important; 
+  color: #343a40 !important;
+}
+body.dark-mode .badge.bg-danger {
+  background-color: #dc3545 !important;
+  color: #f8f9fa !important;
+}
+
+/*
+  TABLES 
+  - You have .table-striped, .table-bordered, .table-dark, etc.
+*/
+body.dark-mode .table {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .table thead,
+body.dark-mode .table thead th {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .table-bordered th,
+body.dark-mode .table-bordered td {
+  border-color: #6c757d !important;
+}
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #52585d !important;
+}
+
+/*
+  FORMS (Login, Register, etc.)
+*/
+body.dark-mode .form-control {
+  background-color: #495057 !important;
+  border-color: #6c757d !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .form-control:focus {
+  background-color: #495057 !important;
+  color: #f8f9fa !important;
+  border-color: #0a74da !important;
+}
+body.dark-mode .input-group-text {
+  background-color: #343a40 !important;
+  border-color: #6c757d !important;
+  color: #f8f9fa !important;
+}
+
+/*
+  CAROUSEL CONTROLS
+  - For country_detail.html
+*/
+body.dark-mode .carousel-control-prev-icon,
+body.dark-mode .carousel-control-next-icon {
+  filter: invert(1) !important;
+}
+
+/*
+  FOOTER
+*/
+body.dark-mode footer {
+  background-color: #212529 !important;
+  color: #f8f9fa !important;
+}
