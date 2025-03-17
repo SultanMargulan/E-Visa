@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session, send_from_directory, current_app
 from flask_login import login_user, current_user, logout_user, login_required
 from app.models import User, Country, VisaApplication, VisaInfo, CountryImage
 from app.forms import RegistrationForm, LoginForm, AddVisaApplicationForm
@@ -95,6 +95,29 @@ def verify_otp():
 
     return render_template('verify_otp.html')
 
+@bp.route('/resend-otp', methods=['GET'])
+def resend_otp():
+    user_id = session.get('otp_user_id')
+    if not user_id:
+        flash("Session expired. Please log in again.", "danger")
+        return redirect(url_for('main.login'))
+
+    user = User.query.get(user_id)
+    if not user:
+        flash("User not found.", "danger")
+        return redirect(url_for('main.login'))
+
+    otp_code = generate_otp()
+    session['otp_code'] = otp_code
+
+    try:
+        send_otp_via_email(user, otp_code)
+        flash("OTP has been resent to your email.", "info")
+    except Exception as e:
+        flash(f"Failed to send OTP: {e}", "danger")
+
+    return redirect(url_for('main.verify_otp'))
+
 @bp.route('/logout')
 @login_required
 def logout():
@@ -164,7 +187,7 @@ def visa_status():
 
 
 UPLOAD_FOLDER = './app/uploads'
-ALLOWED_EXTENSIONS = {'pdf'}
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -184,7 +207,7 @@ def add_visa_application():
         file = request.files.get('documents')
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            upload_path = os.path.join(UPLOAD_FOLDER, filename)
+            upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             os.makedirs(UPLOAD_FOLDER, exist_ok=True)
             file.save(upload_path)
 
@@ -237,8 +260,10 @@ def admin_dashboard():
         rejected_count=rejected_count
     )
 
+@bp.route('/documents/<filename>')
+def serve_document(filename):
+    return (current_app.config['UPLOAD_FOLDER'], filename)
 
-# CRUD для пользователей
 @bp.route('/admin/users', methods=['GET', 'POST'])
 @login_required
 @admin_required

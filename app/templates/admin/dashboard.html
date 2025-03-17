@@ -1,98 +1,217 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="container mt-5">
-  <h1 class="mb-4">Admin Dashboard</h1>
-  <div style="max-width: 600px; margin: 0 auto; height: 300px;">
-    <canvas id="adminChart"></canvas>
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <h1 class="h2 mb-0">Admin Dashboard</h1>
+    <div class="btn-group">
+      <a href="{{ url_for('main.home') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-house-door me-2"></i>Home
+      </a>
+    </div>
   </div>
-  <div style="max-width: 600px; margin: 30px auto; height: 300px;">
-    <canvas id="statusChart"></canvas>
+
+  <!-- Quick Stats -->
+  <div class="row g-4 mb-5">
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-primary">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0 bg-primary text-white rounded-circle p-3 me-3">
+              <i class="bi bi-people fs-4"></i>
+            </div>
+            <div>
+              <h3 class="mb-0">{{ user_count }}</h3>
+              <small class="text-muted">Total Users</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-secondary">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0 bg-secondary text-white rounded-circle p-3 me-3">
+              <i class="bi bi-globe fs-4"></i>
+            </div>
+            <div>
+              <h3 class="mb-0">{{ country_count }}</h3>
+              <small class="text-muted">Total Countries</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-success">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0 bg-success text-white rounded-circle p-3 me-3">
+              <i class="bi bi-file-earmark-text fs-4"></i>
+            </div>
+            <div>
+              <h3 class="mb-0">{{ visa_app_count }}</h3>
+              <small class="text-muted">Visa Applications</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-warning">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0 bg-warning text-white rounded-circle p-3 me-3">
+              <i class="bi bi-info-circle fs-4"></i>
+            </div>
+            <div>
+              <h3 class="mb-0">{{ visa_info_count }}</h3>
+              <small class="text-muted">Visa Info</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  
-  
-  <a href="{{ url_for('main.home') }}" class="btn btn-primary mb-4">Back to Home</a>
-  <ul class="list-group">
-    <li class="list-group-item">
-      <a href="{{ url_for('main.admin_users') }}">
-        <i class="fas fa-users"></i> Manage Users
-      </a>
-    </li>
-    <li class="list-group-item">
-      <a href="{{ url_for('main.admin_countries') }}">
-        <i class="fas fa-globe"></i> Manage Countries
-      </a>
-    </li>
-    <li class="list-group-item">
-      <a href="{{ url_for('main.admin_visa_applications') }}">
-        <i class="fas fa-file-alt"></i> Manage Visa Applications
-      </a>
-    </li>
-    <li class="list-group-item">
-      <a href="{{ url_for('main.admin_visa_info') }}">
-        <i class="fas fa-info-circle"></i> Manage Visa Info
-      </a>
-    </li>
-  </ul>
+
+  <!-- Charts Section -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-gradient-primary text-white">
+          <h5 class="mb-0">System Overview</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="adminChart" style="height: 300px;"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-gradient-success text-white">
+          <h5 class="mb-0">Application Statuses</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="statusChart" style="height: 300px;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-gradient-dark text-white">
+      <h5 class="mb-0">Management Tools</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <a href="{{ url_for('main.admin_users') }}" class="card h-100 hover-scale text-decoration-none">
+            <div class="card-body text-center">
+              <i class="bi bi-people fs-1 text-primary mb-3"></i>
+              <h6>User Management</h6>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-3">
+          <a href="{{ url_for('main.admin_countries') }}" class="card h-100 hover-scale text-decoration-none">
+            <div class="card-body text-center">
+              <i class="bi bi-globe fs-1 text-secondary mb-3"></i>
+              <h6>Country Management</h6>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-3">
+          <a href="{{ url_for('main.admin_visa_applications') }}" class="card h-100 hover-scale text-decoration-none">
+            <div class="card-body text-center">
+              <i class="bi bi-file-earmark-text fs-1 text-success mb-3"></i>
+              <h6>Visa Applications</h6>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-3">
+          <a href="{{ url_for('main.admin_visa_info') }}" class="card h-100 hover-scale text-decoration-none">
+            <div class="card-body text-center">
+              <i class="bi bi-info-circle fs-1 text-warning mb-3"></i>
+              <h6>Visa Info Management</h6>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
+
 {% block extra_js %}
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    // Pie chart for overall counts
-    const ctx = document.getElementById('adminChart').getContext('2d');
-    const adminChart = new Chart(ctx, {
-      type: 'pie',
+    // Get current theme colors
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const textColor = isDarkMode ? '#f8f9fa' : '#374151';
+    const gridColor = isDarkMode ? '#4b5563' : '#e5e7eb';
+
+    // Common chart options
+    const chartOptions = {
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: textColor }
+        },
+        tooltip: {
+          enabled: true,
+          bodyColor: textColor,
+          titleColor: textColor,
+          backgroundColor: isDarkMode ? '#1f2937' : '#ffffff'
+        }
+      }
+    };
+
+    // System Overview Chart
+    const adminChart = new Chart(document.getElementById('adminChart'), {
+      type: 'doughnut',
       data: {
-        labels: ['Users', 'Countries', 'Visa Applications', 'Visa Info'],
+        labels: ['Users', 'Countries', 'Applications', 'Visa Info'],
         datasets: [{
-          label: 'Count',
           data: [{{ user_count }}, {{ country_count }}, {{ visa_app_count }}, {{ visa_info_count }}],
           backgroundColor: [
-            'rgba(10, 116, 218, 0.7)',
-            'rgba(108, 117, 125, 0.7)',
-            'rgba(40, 167, 69, 0.7)',
-            'rgba(255, 193, 7, 0.7)'
+            'rgba(10, 116, 218, 0.8)',
+            'rgba(40, 167, 69, 0.8)',
+            'rgba(255, 193, 7, 0.8)',
+            'rgba(108, 117, 125, 0.8)'
           ],
-          borderWidth: 1
+          hoverOffset: 20
         }]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
-        }
+        ...chartOptions,
+        animation: { animateRotate: true }
       }
     });
 
-    // Doughnut chart for visa application statuses
-    const statusCtx = document.getElementById('statusChart').getContext('2d');
-    const statusChart = new Chart(statusCtx, {
-      type: 'doughnut',
+    // Application Statuses Chart
+    const statusChart = new Chart(document.getElementById('statusChart'), {
+      type: 'polarArea',
       data: {
         labels: ['Pending', 'Approved', 'Rejected'],
         datasets: [{
-          label: 'Visa Applications',
           data: [{{ pending_count }}, {{ approved_count }}, {{ rejected_count }}],
           backgroundColor: [
-            'rgba(255, 193, 7, 0.7)',
-            'rgba(40, 167, 69, 0.7)',
-            'rgba(220, 53, 69, 0.7)'
-          ],
-          borderWidth: 1
+            'rgba(255, 193, 7, 0.8)',
+            'rgba(40, 167, 69, 0.8)',
+            'rgba(220, 53, 69, 0.8)'
+          ]
         }]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom'
+        ...chartOptions,
+        scales: {
+          r: {
+            grid: { color: gridColor },
+            ticks: { color: textColor }
           }
-        }
+        },
+        animation: { animateRotate: true }
       }
     });
   });

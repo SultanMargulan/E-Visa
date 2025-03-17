@@ -1,87 +1,95 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-4">Visa Comparison</h1>
-    <form method="POST">
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="country_id_1" class="form-label">Country 1</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                    <select id="country_id_1" name="country_id_1" class="form-control">
-                        {% for country in countries %}
-                        <option value="{{ country.id }}">{{ country.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="visa_type_1" class="form-label">Visa Type 1</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-card-text"></i></span>
-                    <select id="visa_type_1" name="visa_type_1" class="form-control" required>
-                        {% for visa_type in visa_types %}
-                        <option value="{{ visa_type }}">{{ visa_type }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+<div class="container py-5">
+  <div class="card shadow-lg">
+    <div class="card-header bg-gradient-primary text-white">
+      <h1 class="h3 mb-0"><i class="bi bi-clipboard2-compare me-2"></i>Visa Comparison</h1>
+    </div>
+    <div class="card-body p-4">
+      <form method="POST" class="row g-4 mb-5">
+        <div class="col-md-6 mb-3">
+          <label for="country_id_1" class="form-label">Country 1</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+            <select id="country_id_1" name="country_id_1" class="form-control">
+              {% for country in countries %}
+              <option value="{{ country.id }}">{{ country.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
         </div>
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="country_id_2" class="form-label">Country 2</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                    <select id="country_id_2" name="country_id_2" class="form-control">
-                        {% for country in countries %}
-                        <option value="{{ country.id }}">{{ country.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="visa_type_2" class="form-label">Visa Type 2</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-card-text"></i></span>
-                    <select id="visa_type_2" name="visa_type_2" class="form-control" required>
-                        {% for visa_type in visa_types %}
-                        <option value="{{ visa_type }}">{{ visa_type }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+        <div class="col-md-6 mb-3">
+          <label for="visa_type_1" class="form-label">Visa Type 1</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+            <select id="visa_type_1" name="visa_type_1" class="form-control" required>
+              {% for visa_type in visa_types %}
+              <option value="{{ visa_type }}">{{ visa_type }}</option>
+              {% endfor %}
+            </select>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary">Compare</button>
-    </form>
-    {% if visa_info_1 and visa_info_2 %}
-    <table class="table table-striped mt-4">
-        <thead>
-            <tr>
-                <th>Attribute</th>
-                <th>Visa 1</th>
-                <th>Visa 2</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Cost</td>
-                <td>{{ visa_info_1.cost }}</td>
-                <td>{{ visa_info_2.cost }}</td>
-            </tr>
-            <tr>
-                <td>Processing Time</td>
-                <td>{{ visa_info_1.processing_time }}</td>
-                <td>{{ visa_info_2.processing_time }}</td>
-            </tr>
-            <tr>
-                <td>Requirements</td>
-                <td>{{ visa_info_1.requirements }}</td>
-                <td>{{ visa_info_2.requirements }}</td>
-            </tr>
-        </tbody>
-    </table>
-    {% endif %}
-</div>
+        <div class="col-md-6 mb-3">
+          <label for="country_id_2" class="form-label">Country 2</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+            <select id="country_id_2" name="country_id_2" class="form-control">
+              {% for country in countries %}
+              <option value="{{ country.id }}">{{ country.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="visa_type_2" class="form-label">Visa Type 2</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+            <select id="visa_type_2" name="visa_type_2" class="form-control" required>
+              {% for visa_type in visa_types %}
+              <option value="{{ visa_type }}">{{ visa_type }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-12 text-center">
+          <button type="submit" class="btn btn-primary btn-lg px-5">
+            <i class="bi bi-compass me-2"></i>Compare Visas
+          </button>
+        </div>
+      </form>
 
+      {% if visa_info_1 and visa_info_2 %}
+      <div class="comparison-table">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="card h-100 border-primary">
+              <div class="card-header bg-primary text-white">
+                <h3 class="h5 mb-0">{{ visa_info_1.country.name }} - {{ visa_info_1.visa_type }}</h3>
+              </div>
+              <div class="card-body">
+                <p><strong>Cost:</strong> {{ visa_info_1.cost }}</p>
+                <p><strong>Processing Time:</strong> {{ visa_info_1.processing_time }}</p>
+                <p><strong>Requirements:</strong> {{ visa_info_1.requirements }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card h-100 border-success">
+              <div class="card-header bg-success text-white">
+                <h3 class="h5 mb-0">{{ visa_info_2.country.name }} - {{ visa_info_2.visa_type }}</h3>
+              </div>
+              <div class="card-body">
+                <p><strong>Cost:</strong> {{ visa_info_2.cost }}</p>
+                <p><strong>Processing Time:</strong> {{ visa_info_2.processing_time }}</p>
+                <p><strong>Requirements:</strong> {{ visa_info_2.requirements }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}

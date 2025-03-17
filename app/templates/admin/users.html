@@ -6,31 +6,39 @@
   <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary mb-3">
     <i class="fas fa-arrow-left"></i> Back to Dashboard
   </a>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for user in users %}
-      <tr>
-        <td>{{ user.id }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.email }}</td>
-        <td>
-          <form method="POST" action="{{ url_for('main.delete_user', user_id=user.id) }}" style="display:inline;">
-            <button type="submit" class="btn btn-danger btn-sm">
-              <i class="fas fa-trash"></i> Delete
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="bg-light">
+        <tr>
+          <th>User</th>
+          <th>Contact</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="avatar-sm me-3">
+                <div class="avatar-title bg-primary text-white rounded-circle">
+                  {{ user.username[0] }}
+                </div>
+              </div>
+              {{ user.username }}
+            </div>
+          </td>
+          <td>{{ user.email }}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" 
+                    data-bs-target="#deleteUser{{ user.id }}">
+              <i class="bi bi-trash"></i>
             </button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

@@ -1,91 +1,71 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-5">
-        <!-- Главный Jumbotron -->
-        <div class="jumbotron bg-white p-5 shadow">
-            <h1 class="display-4 text-center">Welcome to the E-Visa Optimization System</h1>
-            <p class="lead text-center">
-                Streamline your visa application process with our user-friendly platform.
-            </p>
-            <hr class="my-4">
-            {% if current_user.is_authenticated %}
-            <div class="text-center">
-                {% if current_user.is_admin %}
-                    <a class="btn btn-primary btn-lg" href="{{ url_for('main.admin_dashboard') }}" role="button">Go to Admin Dashboard</a>
-                {% else %}
-                    <a class="btn btn-primary btn-lg" href="{{ url_for('main.dashboard') }}" role="button">Go to Dashboard</a>
-                {% endif %}
-            </div>
-            {% else %}
-                <div class="text-center">
-                    <a class="btn btn-primary btn-lg" href="{{ url_for('main.register') }}" role="button">Get Started</a>
-                </div>
-            {% endif %}
+<section class="hero-section mb-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-4">Smart Visa Solutions for Global Citizens</h1>
+        <p class="lead mb-4">Streamline your visa applications with AI-powered assistance and real-time tracking.</p>
+        <div class="d-flex gap-3">
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg px-5">
+              Go to Dashboard <i class="bi bi-arrow-right"></i>
+            </a>
+          {% else %}
+            <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg px-5">
+              Get Started
+            </a>
+            <a href="{{ url_for('main.countries') }}" class="btn btn-outline-primary btn-lg px-5">
+              Explore Countries
+            </a>
+          {% endif %}
         </div>
-
-        <!-- Информационные карты -->
-        <div class="row mt-5">
-            <!-- Популярные страны -->
-            <div class="col-lg-6">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0">Popular Destinations</h5>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group">
-                            {% for country in popular_countries %}
-                            <li class="list-group-item d-flex align-items-center">
-                                {% if country.images and country.images|length > 0 %}
-                                    <img src="{{ country.images[0].image_url }}" alt="{{ country.name }}" class="img-thumbnail mr-3" style="width: 50px; height: 50px;" loading="lazy">
-                                {% endif %}
-                                <div>
-                                    <strong>{{ country.name }}</strong><br>
-                                    <span class="text-muted">{{ country.region }}</span>
-                                </div>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- О визах -->
-            <div class="col-lg-6">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="card-title mb-0">About Visas</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>Our platform supports <strong>{{ visa_count }}</strong> visa entries with the following types:</p>
-                        <ul class="list-group">
-                            {% for visa_type in visa_types %}
-                            <li class="list-group-item">{{ visa_type }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card shadow-sm mt-5 mb-4">
-            <div class="card-header bg-dark text-white">
-            <h5 class="card-title mb-0">Key Features</h5>
-            </div>
-            <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                <h6>Visa Cost Calculator</h6>
-                <p>Calculate the estimated cost of visa applications with ease.</p>
-                <a href="{{ url_for('main.visa_cost_calculator') }}" class="btn btn-info">Try Now</a>
-                </div>
-                <div class="col-md-6">
-                <h6>Visa Comparison</h6>
-                <p>Compare visa types across different countries to make informed decisions.</p>
-                <a href="{{ url_for('main.visa_comparison') }}" class="btn btn-success">Compare Now</a>
-                </div>
-            </div>
-            </div>
-        </div>
+      </div>
+      <div class="col-lg-6">
+        <img src="{{ url_for('static', filename='images/hero-illustration.svg') }}" alt="Travel Illustration" class="img-fluid">
+      </div>
     </div>
+  </div>
+</section>
+
+<section class="features-section mb-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <div class="feature-icon mb-3">
+              <i class="bi bi-clock-history display-4 text-primary"></i>
+            </div>
+            <h3 class="h4 mb-3">Fast Processing</h3>
+            <p class="text-muted">Average processing time reduced by 40% using our smart verification system.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <div class="feature-icon mb-3">
+              <i class="bi bi-shield-check display-4 text-success"></i>
+            </div>
+            <h3 class="h4 mb-3">Secure Platform</h3>
+            <p class="text-muted">Military-grade encryption and secure document handling for your peace of mind.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <div class="feature-icon mb-3">
+              <i class="bi bi-globe2 display-4 text-info"></i>
+            </div>
+            <h3 class="h4 mb-3">Global Coverage</h3>
+            <p class="text-muted">Access visa information for over 150 countries with real-time updates.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

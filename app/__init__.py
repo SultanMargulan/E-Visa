@@ -22,7 +22,8 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-
+    # Add to create_app() function:
+    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'uploads')  # Adjust path as needed
     # flask mail
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
     app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))

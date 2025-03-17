@@ -1,0 +1,489 @@
+add_country.html:
+<!-- Enhanced add_country.html -->
+{% extends "base.html" %}
+{% block content %}
+<section class="container py-5">
+  <div class="card shadow-lg">
+    <div class="card-header bg-gradient-primary text-white">
+      <h2 class="h4 mb-0"><i class="bi bi-globe me-2"></i>Add New Country</h2>
+    </div>
+    <div class="card-body p-4">
+      <form method="POST" class="needs-validation" novalidate>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label for="name" class="form-label">Country Name</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-tag"></i></span>
+              <input type="text" id="name" name="name" class="form-control form-control-lg" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="region" class="form-label">Region</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-pin-map"></i></span>
+              <input type="text" id="region" name="region" class="form-control form-control-lg" required>
+            </div>
+          </div>
+          <div class="col-12">
+            <label for="image_url" class="form-label">Image URL</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-image"></i></span>
+              <input type="url" id="image_url" name="image_url" class="form-control" 
+                     placeholder="https://example.com/image.jpg" pattern="https://.*">
+            </div>
+          </div>
+        </div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+          <a href="{{ url_for('main.admin_countries') }}" class="btn btn-secondary">
+            <i class="bi bi-x-circle me-2"></i>Cancel
+          </a>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save me-2"></i>Save Country
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+add_visa_info.html:
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Add Visa Information</h1>
+  <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary mb-3">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+  <form method="POST">
+    <div class="mb-3">
+      <label for="country_id" class="form-label">Country</label>
+      <select id="country_id" name="country_id" class="form-control">
+        {% for country in countries %}
+        <option value="{{ country.id }}">{{ country.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="visa_type" class="form-label">Visa Type</label>
+      <input type="text" id="visa_type" name="visa_type" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="requirements" class="form-label">Requirements</label>
+      <textarea id="requirements" name="requirements" class="form-control" required></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="processing_time" class="form-label">Processing Time</label>
+      <input type="text" id="processing_time" name="processing_time" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="cost" class="form-label">Cost</label>
+      <input type="number" step="0.01" id="cost" name="cost" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="vaccinations" class="form-label">Vaccinations</label>
+      <textarea id="vaccinations" name="vaccinations" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="useful_links" class="form-label">Useful Links</label>
+      <textarea id="useful_links" name="useful_links" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">
+      <i class="fas fa-save"></i> Submit
+    </button>
+  </form>
+</div>
+{% endblock %}
+
+
+countries.html:
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h1 class="my-4">Countries</h1>
+  <a href="{{ url_for('main.add_country') }}" class="btn btn-primary mb-3">
+    <i class="fas fa-plus"></i> Add Country
+  </a>
+  <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary mb-3">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>ID</th>
+          <th>Images</th>
+          <th>Name</th>
+          <th>Region</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for country in countries %}
+        <tr>
+          <td>{{ country.id }}</td>
+          <td>
+            {% if country.images and country.images|length > 0 %}
+            <div class="d-flex flex-wrap">
+              {% for image in country.images %}
+              <img src="{{ image.image_url }}" alt="{{ country.name }}" class="img-thumbnail me-1 mb-1" style="width: 50px; height: 50px;">
+              {% endfor %}
+            </div>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{{ url_for('main.country_detail', country_id=country.id) }}">{{ country.name }}</a>
+          </td>
+          <td>{{ country.region }}</td>
+          <td>
+            <div class="btn-group" role="group" aria-label="Actions">
+              <a href="{{ url_for('main.edit_country', country_id=country.id) }}" class="btn btn-warning btn-sm">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <form method="POST" action="{{ url_for('main.delete_country', country_id=country.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this country?');">
+                <button type="submit" class="btn btn-danger btn-sm">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>        
+</div>
+{% endblock %}
+
+
+dashboard.html:
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Admin Dashboard</h1>
+  <div style="max-width: 600px; margin: 0 auto; height: 300px;">
+    <canvas id="adminChart"></canvas>
+  </div>
+  <div style="max-width: 600px; margin: 30px auto; height: 300px;">
+    <canvas id="statusChart"></canvas>
+  </div>
+  
+  
+  <a href="{{ url_for('main.home') }}" class="btn btn-primary mb-4">Back to Home</a>
+  <ul class="list-group">
+    <li class="list-group-item">
+      <a href="{{ url_for('main.admin_users') }}">
+        <i class="fas fa-users"></i> Manage Users
+      </a>
+    </li>
+    <li class="list-group-item">
+      <a href="{{ url_for('main.admin_countries') }}">
+        <i class="fas fa-globe"></i> Manage Countries
+      </a>
+    </li>
+    <li class="list-group-item">
+      <a href="{{ url_for('main.admin_visa_applications') }}">
+        <i class="fas fa-file-alt"></i> Manage Visa Applications
+      </a>
+    </li>
+    <li class="list-group-item">
+      <a href="{{ url_for('main.admin_visa_info') }}">
+        <i class="fas fa-info-circle"></i> Manage Visa Info
+      </a>
+    </li>
+  </ul>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Pie chart for overall counts
+    const ctx = document.getElementById('adminChart').getContext('2d');
+    const adminChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Users', 'Countries', 'Visa Applications', 'Visa Info'],
+        datasets: [{
+          label: 'Count',
+          data: [{{ user_count }}, {{ country_count }}, {{ visa_app_count }}, {{ visa_info_count }}],
+          backgroundColor: [
+            'rgba(10, 116, 218, 0.7)',
+            'rgba(108, 117, 125, 0.7)',
+            'rgba(40, 167, 69, 0.7)',
+            'rgba(255, 193, 7, 0.7)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+
+    // Doughnut chart for visa application statuses
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    const statusChart = new Chart(statusCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pending', 'Approved', 'Rejected'],
+        datasets: [{
+          label: 'Visa Applications',
+          data: [{{ pending_count }}, {{ approved_count }}, {{ rejected_count }}],
+          backgroundColor: [
+            'rgba(255, 193, 7, 0.7)',
+            'rgba(40, 167, 69, 0.7)',
+            'rgba(220, 53, 69, 0.7)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}
+
+edit_country.html:
+
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Edit Country</h1>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="name" class="form-label">Country Name</label>
+            <input type="text" id="name" name="name" class="form-control" value="{{ country.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="region" class="form-label">Region</label>
+            <input type="text" id="region" name="region" class="form-control" value="{{ country.region }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="image_urls" class="form-label">Image URLs (separate by commas)</label>
+            <textarea id="image_urls" name="image_urls" class="form-control" rows="3" placeholder="Enter multiple image URLs separated by commas">{{ image_urls }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{{ url_for('main.admin_countries') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+
+edit_visa_info.html:
+
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Edit Visa Information</h1>
+  <form method="POST">
+    <div class="mb-3">
+      <label for="country_id" class="form-label">Country</label>
+      <select id="country_id" name="country_id" class="form-control">
+        {% for country in countries %}
+        <option value="{{ country.id }}" {% if country.id == visa_info.country_id %}selected{% endif %}>{{ country.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="visa_type" class="form-label">Visa Type</label>
+      <input type="text" id="visa_type" name="visa_type" class="form-control" value="{{ visa_info.visa_type }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="requirements" class="form-label">Requirements</label>
+      <textarea id="requirements" name="requirements" class="form-control" required>{{ visa_info.requirements }}</textarea>
+    </div>
+    <div class="mb-3">
+      <label for="processing_time" class="form-label">Processing Time</label>
+      <input type="text" id="processing_time" name="processing_time" class="form-control" value="{{ visa_info.processing_time }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="cost" class="form-label">Cost</label>
+      <input type="number" step="0.01" id="cost" name="cost" class="form-control" value="{{ visa_info.cost }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="vaccinations" class="form-label">Vaccinations</label>
+      <textarea id="vaccinations" name="vaccinations" class="form-control">{{ visa_info.vaccinations }}</textarea>
+    </div>
+    <div class="mb-3">
+      <label for="useful_links" class="form-label">Useful Links</label>
+      <textarea id="useful_links" name="useful_links" class="form-control">{{ visa_info.useful_links }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update</button>
+  </form>
+</div>
+{% endblock %}
+
+
+users.html:
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Users</h1>
+  <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary mb-3">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="bg-light">
+        <tr>
+          <th>User</th>
+          <th>Contact</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="avatar-sm me-3">
+                <div class="avatar-title bg-primary text-white rounded-circle">
+                  {{ user.username[0] }}
+                </div>
+              </div>
+              {{ user.username }}
+            </div>
+          </td>
+          <td>{{ user.email }}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" 
+                    data-bs-target="#deleteUser{{ user.id }}">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+visa_applications.html:
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Visa Applications</h1>
+  <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary mb-3">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for application in applications %}
+      <tr>
+        <td>{{ application.id }}</td>
+        <td>{{ application.user.username }}</td>
+        <td>{{ application.application_status }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('main.update_visa_application_status', application_id=application.id) }}" style="display:inline;">
+            <div class="mb-2">
+              <select name="new_status" class="form-control form-control-sm">
+                <option value="Pending" {% if application.application_status == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Approved" {% if application.application_status == 'Approved' %}selected{% endif %}>Approved</option>
+                <option value="Rejected" {% if application.application_status == 'Rejected' %}selected{% endif %}>Rejected</option>
+              </select>
+            </div>
+            <div class="mb-2">
+              <textarea name="notes" class="form-control form-control-sm" rows="2" placeholder="Add notes here...">{{ application.notes }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+visa_info.html
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Visa Information</h1>
+  <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary mb-3">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+  <a href="{{ url_for('main.add_visa_info') }}" class="btn btn-primary mb-3">
+    <i class="fas fa-plus"></i> Add Visa Info
+  </a>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Country</th>
+        <th>Visa Type</th>
+        <th>Requirements</th>
+        <th>Processing Time</th>
+        <th>Cost</th>
+        <th>Vaccinations</th>
+        <th>Useful Links</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for visa_info in visa_info_list %}
+      <tr>
+        <td>{{ visa_info.id }}</td>
+        <td>{{ visa_info.country.name }}</td>
+        <td>{{ visa_info.visa_type }}</td>
+        <td>{{ visa_info.requirements }}</td>
+        <td>{{ visa_info.processing_time }}</td>
+        <td>{{ visa_info.cost }}</td>
+        <td>{{ visa_info.vaccinations or 'N/A' }}</td>
+        <td>
+          {% if visa_info.useful_links %}
+          <a href="{{ visa_info.useful_links }}" target="_blank">View Link</a>
+          {% else %}
+          N/A
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('main.edit_visa_info', visa_info_id=visa_info.id) }}" class="btn btn-warning btn-sm">
+            <i class="fas fa-edit"></i> Edit
+          </a>
+          <form method="POST" action="{{ url_for('main.delete_visa_info', visa_info_id=visa_info.id) }}" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-sm">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
