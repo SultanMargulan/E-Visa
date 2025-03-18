@@ -13,14 +13,29 @@
                         <div class="mb-3">
                             {{ form.username.label(class="form-label") }}
                             {{ form.username(class="form-control", placeholder="Enter your username") }}
+                            {% if form.username.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.username.errors[0] }}
+                                </div>
+                            {% endif %}
                         </div>
                         <div class="mb-3">
                             {{ form.email.label(class="form-label") }}
                             {{ form.email(class="form-control", placeholder="Enter your email") }}
+                            {% if form.email.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.email.errors[0] }}
+                                </div>
+                            {% endif %}
                         </div>
                         <div class="mb-3">
                             {{ form.phone_number.label(class="form-label") }}
                             {{ form.phone_number(class="form-control", id="phone_number", placeholder="Enter your phone number") }}
+                            {% if form.phone_number.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.phone_number.errors[0] }}
+                                </div>
+                            {% endif %}
                         </div>
                         <div class="mb-3">
                             {{ form.password.label(class="form-label") }}
@@ -30,6 +45,11 @@
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
+                            {% if form.password.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.password.errors[0] }}
+                                </div>
+                            {% endif %}
                         </div>
                         <div class="mb-3">
                             {{ form.confirm_password.label(class="form-label") }}
@@ -39,6 +59,11 @@
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
+                            {% if form.confirm_password.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.confirm_password.errors[0] }}
+                                </div>
+                            {% endif %}
                         </div>
                         <button type="submit" class="btn btn-primary w-100">{{ form.submit.label.text }}</button>
                     </form>
@@ -61,7 +86,18 @@
         </div>
     </div>
 </div>
+<!-- Add required scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
+    // Phone number masking
+    $(document).ready(function () {
+        $('#phone_number').mask('+7 (000) 000 00-00', {
+            placeholder: "+7 (___) ___ __-__"
+        });
+    });
+
+    // Password toggle functionality
     document.addEventListener("DOMContentLoaded", function() {
         const togglePassword = document.querySelector("#togglePassword");
         const password = document.querySelector("#password");

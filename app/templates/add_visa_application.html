@@ -37,7 +37,7 @@
               <div class="text-center">
                 <i class="bi bi-cloud-upload fs-1 text-muted"></i>
                 <h6 class="my-3">Drag & Drop or Browse Files</h6>
-                {{ form.documents(class="form-control", style="opacity: 0; height: 0;") }}
+                {{ form.documents(class="form-control", id="documents", style="opacity: 0; height: 0;") }}
                 <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('documents').click()">
                   Select Documents
                 </button>
@@ -55,6 +55,18 @@
       </form>
     </div>
   </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container mt-3">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 </div>
 
 <script>

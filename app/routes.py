@@ -185,8 +185,6 @@ def visa_status():
 
 
 
-
-UPLOAD_FOLDER = './app/uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg'}
 
 def allowed_file(filename):
@@ -195,42 +193,47 @@ def allowed_file(filename):
 @bp.route('/visa-status/add', methods=['GET', 'POST'])
 @login_required
 def add_visa_application():
-    # Загружаем список стран из базы данных
     countries = [(country.id, country.name) for country in Country.query.all()]
-
-    # Создаём форму и задаём список стран для выбора
     form = AddVisaApplicationForm()
     form.country_id.choices = countries
 
-    if request.method == 'POST' and form.validate_on_submit():
-        # Обработка файла
-        file = request.files.get('documents')
+    if form.validate_on_submit():
+        # Use form.documents.data instead of request.files
+        file = form.documents.data
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-            file.save(upload_path)
+            upload_dir = current_app.config['UPLOAD_FOLDER']
+            # Ensure the upload directory exists
+            os.makedirs(upload_dir, exist_ok=True)
+            upload_path = os.path.join(upload_dir, filename)
+            
+            try:
+                file.save(upload_path)
+            except Exception as e:
+                flash(f'Error saving file: {e}', 'danger')
+                return redirect(url_for('main.add_visa_application'))
 
-            # Сохранение заявки
             new_application = VisaApplication(
                 user_id=current_user.id,
                 country_id=form.country_id.data,
                 visa_type=form.visa_type.data,
                 passport_number=form.passport_number.data,
-                documents=json.dumps([upload_path]),
+                documents=json.dumps([filename]),
                 application_status='Pending'
             )
             db.session.add(new_application)
             db.session.commit()
-
-            flash('Visa application submitted successfully!', 'success')
+            flash('Visa application submitted!', 'success')
             return redirect(url_for('main.visa_status'))
         else:
-            flash('Invalid file type or no file uploaded. Only PDFs, PNGs, and JPGs are allowed.', 'danger')
+            flash('Invalid file type or no file uploaded.', 'danger')
+
+    # Display form errors to the user
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(f"{getattr(form, field).label.text}: {error}", 'danger')
 
     return render_template('add_visa_application.html', form=form)
-
-
 
 # ADMIN ROUTES
 
@@ -262,7 +265,8 @@ def admin_dashboard():
 
 @bp.route('/documents/<filename>')
 def serve_document(filename):
-    return (current_app.config['UPLOAD_FOLDER'], filename)
+    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
+
 
 @bp.route('/admin/users', methods=['GET', 'POST'])
 @login_required
