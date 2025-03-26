@@ -14,14 +14,14 @@
             </div>
             <div class="card-body">
                 <p><strong>Email:</strong> {{ user.email }}</p>
-                {% if current_user.is_admin %}
-                    <!-- Кнопка для админа -->
-                    <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-warning">Go to Admin Dashboard</a>
-                {% else %}
-                    <!-- Кнопка для пользователей -->
-                    <a href="{{ url_for('main.visa_status') }}" class="btn btn-info">Track Visa Applications</a>
-                {% endif %}
-                <a href="{{ url_for('main.logout') }}" class="btn btn-danger">Logout</a>
+                <div class="d-flex justify-content-between mt-3">
+                    {% if current_user.is_admin %}
+                        <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-warning">Go to Admin Dashboard</a>
+                    {% else %}
+                        <a href="{{ url_for('main.visa_status') }}" class="btn btn-info">Track Visa Applications</a>
+                    {% endif %}
+                    <a href="{{ url_for('main.logout') }}" class="btn btn-danger">Logout</a>
+                </div>
             </div>
         </div>
     </div>

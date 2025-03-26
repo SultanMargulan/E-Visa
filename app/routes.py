@@ -395,13 +395,37 @@ def add_country_image(country_id):
     return render_template('admin/add_country_image.html', country=country)
 
 
-# CRUD для заявок на визу
 @bp.route('/admin/visa-applications', methods=['GET'])
 @login_required
 @admin_required
 def admin_visa_applications():
-    applications = VisaApplication.query.all()
-    return render_template('admin/visa_applications.html', applications=applications)
+    # Eager load related Country and User data to avoid N+1 queries
+    applications = VisaApplication.query.options(
+        db.joinedload(VisaApplication.country),
+        db.joinedload(VisaApplication.user)
+    ).all()
+    
+    processed_applications = []
+    for app in applications:
+        try:
+            documents = json.loads(app.documents) if app.documents else []
+        except json.JSONDecodeError:
+            documents = []
+        
+        processed_applications.append({
+            'id': app.id,
+            'user': app.user,
+            'country': app.country,
+            'visa_type': app.visa_type,
+            'passport_number': app.passport_number,
+            'documents': documents,
+            'submitted_at': app.submitted_at,
+            'last_updated_at': app.last_updated_at,
+            'status': app.application_status,
+            'notes': app.notes
+        })
+    
+    return render_template('admin/visa_applications.html', applications=processed_applications)
 
 
 @bp.route('/admin/visa-applications/<int:application_id>/update', methods=['POST'])

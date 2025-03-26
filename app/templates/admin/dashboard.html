@@ -13,7 +13,7 @@
   <!-- Quick Stats -->
   <div class="row g-4 mb-5">
     <div class="col-6 col-md-3">
-      <div class="card shadow-sm border-primary">
+      <div class="card shadow border-primary">
         <div class="card-body">
           <div class="d-flex align-items-center">
             <div class="flex-shrink-0 bg-primary text-white rounded-circle p-3 me-3">
@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="card shadow-sm border-secondary">
+      <div class="card shadow border-secondary">
         <div class="card-body">
           <div class="d-flex align-items-center">
             <div class="flex-shrink-0 bg-secondary text-white rounded-circle p-3 me-3">
@@ -43,7 +43,7 @@
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="card shadow-sm border-success">
+      <div class="card shadow border-success">
         <div class="card-body">
           <div class="d-flex align-items-center">
             <div class="flex-shrink-0 bg-success text-white rounded-circle p-3 me-3">
@@ -58,7 +58,7 @@
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="card shadow-sm border-warning">
+      <div class="card shadow border-warning">
         <div class="card-body">
           <div class="d-flex align-items-center">
             <div class="flex-shrink-0 bg-warning text-white rounded-circle p-3 me-3">
@@ -151,6 +151,14 @@
     const textColor = isDarkMode ? '#f8f9fa' : '#374151';
     const gridColor = isDarkMode ? '#4b5563' : '#e5e7eb';
 
+    // Get chart colors from CSS variables
+    const chartColors = [
+      getComputedStyle(document.documentElement).getPropertyValue('--chart-color1').trim(),
+      getComputedStyle(document.documentElement).getPropertyValue('--chart-color2').trim(),
+      getComputedStyle(document.documentElement).getPropertyValue('--chart-color3').trim(),
+      getComputedStyle(document.documentElement).getPropertyValue('--chart-color4').trim()
+    ];
+
     // Common chart options
     const chartOptions = {
       plugins: {
@@ -174,12 +182,7 @@
         labels: ['Users', 'Countries', 'Applications', 'Visa Info'],
         datasets: [{
           data: [{{ user_count }}, {{ country_count }}, {{ visa_app_count }}, {{ visa_info_count }}],
-          backgroundColor: [
-            'rgba(10, 116, 218, 0.8)',
-            'rgba(40, 167, 69, 0.8)',
-            'rgba(255, 193, 7, 0.8)',
-            'rgba(108, 117, 125, 0.8)'
-          ],
+          backgroundColor: chartColors,
           hoverOffset: 20
         }]
       },
@@ -197,9 +200,9 @@
         datasets: [{
           data: [{{ pending_count }}, {{ approved_count }}, {{ rejected_count }}],
           backgroundColor: [
-            'rgba(255, 193, 7, 0.8)',
-            'rgba(40, 167, 69, 0.8)',
-            'rgba(220, 53, 69, 0.8)'
+            chartColors[2],
+            chartColors[1],
+            'rgba(220, 53, 69, 0.8)' // Red color for rejected status
           ]
         }]
       },

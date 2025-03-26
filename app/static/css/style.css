@@ -442,6 +442,10 @@ body.dark-mode .visa-status-badge {
   --dark-text: #f8fafc;
   --light-bg: #f1f5f9;
   --gradient-primary: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  --chart-color1: #0a74da;
+  --chart-color2: #28a745;
+  --chart-color3: #ffc107;
+  --chart-color4: #6c757d;
 }
 
 /* Enhanced Base Styling */
@@ -541,6 +545,10 @@ h1, h2, h3 {
 .dark-mode {
   --light-bg: var(--dark-bg);
   --dark-text: #f8fafc;
+  --chart-color1: #0a74da;
+  --chart-color2: #28a745;
+  --chart-color3: #ffc107;
+  --chart-color4: #6c757d;
 }
 
 body.dark-mode {
@@ -607,4 +615,19 @@ body.dark-mode .visa-status-badge {
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
+}
+
+.card-img-top {
+  height: 200px; /* Adjust this value based on your design */
+  object-fit: cover;
+}
+
+.avatar-sm {
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+}
+
+.img-thumbnail {
+  object-fit: cover;
 }

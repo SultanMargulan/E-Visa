@@ -6,39 +6,57 @@
   <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary mb-3">
     <i class="fas fa-arrow-left"></i> Back to Dashboard
   </a>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>User</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for application in applications %}
-      <tr>
-        <td>{{ application.id }}</td>
-        <td>{{ application.user.username }}</td>
-        <td>{{ application.application_status }}</td>
-        <td>
-          <form method="POST" action="{{ url_for('main.update_visa_application_status', application_id=application.id) }}" style="display:inline;">
-            <div class="mb-2">
-              <select name="new_status" class="form-control form-control-sm">
-                <option value="Pending" {% if application.application_status == 'Pending' %}selected{% endif %}>Pending</option>
-                <option value="Approved" {% if application.application_status == 'Approved' %}selected{% endif %}>Approved</option>
-                <option value="Rejected" {% if application.application_status == 'Rejected' %}selected{% endif %}>Rejected</option>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Country</th>
+          <th>Visa Type</th>
+          <th>Passport Number</th>
+          <th>Documents</th>
+          <th>Submitted At</th>
+          <th>Last Updated</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for application in applications %}
+        <tr>
+          <td>{{ application.id }}</td>
+          <td>{{ application.user.username }}</td>
+          <td>{{ application.country.name }}</td>
+          <td>{{ application.visa_type }}</td>
+          <td>{{ application.passport_number }}</td>
+          <td>
+            {% for doc in application.documents %}
+              <a href="{{ url_for('main.serve_document', filename=doc) }}" target="_blank" class="d-block">
+                {{ doc }}
+              </a>
+            {% else %}
+              No documents
+            {% endfor %}
+          </td>
+          <td>{{ application.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ application.last_updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ application.status }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('main.update_visa_application_status', application_id=application.id) }}" class="d-flex flex-column gap-2">
+              <select name="new_status" class="form-select form-select-sm">
+                <option value="Pending" {% if application.status == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Approved" {% if application.status == 'Approved' %}selected{% endif %}>Approved</option>
+                <option value="Rejected" {% if application.status == 'Rejected' %}selected{% endif %}>Rejected</option>
               </select>
-            </div>
-            <div class="mb-2">
-              <textarea name="notes" class="form-control form-control-sm" rows="2" placeholder="Add notes here...">{{ application.notes }}</textarea>
-            </div>
-            <button type="submit" class="btn btn-sm btn-primary">Update</button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+              <textarea name="notes" class="form-control form-control-sm" rows="2" placeholder="Add notes...">{{ application.notes }}</textarea>
+              <button type="submit" class="btn btn-sm btn-primary">Update</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

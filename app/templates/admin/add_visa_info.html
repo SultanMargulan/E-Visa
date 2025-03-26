@@ -9,7 +9,7 @@
   <form method="POST">
     <div class="mb-3">
       <label for="country_id" class="form-label">Country</label>
-      <select id="country_id" name="country_id" class="form-control">
+      <select id="country_id" name="country_id" class="form-select">
         {% for country in countries %}
         <option value="{{ country.id }}">{{ country.name }}</option>
         {% endfor %}
@@ -39,9 +39,10 @@
       <label for="useful_links" class="form-label">Useful Links</label>
       <textarea id="useful_links" name="useful_links" class="form-control"></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">
-      <i class="fas fa-save"></i> Submit
-    </button>
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Submit</button>
+      <a href="{{ url_for('main.admin_visa_info') }}" class="btn btn-secondary">Cancel</a>
+    </div>
   </form>
 </div>
 {% endblock %}

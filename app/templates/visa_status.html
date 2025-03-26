@@ -68,5 +68,47 @@
       </div>
     </div>
   </div>
+
+  <!-- Modals for application details -->
+  {% for app in applications %}
+  <div class="modal fade" id="detailsModal{{ app.id }}" tabindex="-1" aria-labelledby="detailsModalLabel{{ app.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailsModalLabel{{ app.id }}">Application Details - {{ app.country }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Country:</strong> {{ app.country }}</p>
+              <p><strong>Visa Type:</strong> {{ app.visa_type }}</p>
+              <p><strong>Passport Number:</strong> {{ app.passport_number }}</p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Status:</strong> {{ app.status }}</p>
+              <p><strong>Submitted At:</strong> {{ app.submitted_at.strftime('%d %b %Y %H:%M') }}</p>
+              <p><strong>Last Updated At:</strong> {{ app.last_updated_at.strftime('%d %b %Y %H:%M') }}</p>
+            </div>
+          </div>
+          <hr>
+          <h6>Notes from Admin:</h6>
+          <p>{{ app.notes }}</p>
+          {% if app.documents %}
+          <h6>Documents:</h6>
+          <ul>
+            {% for doc in app.documents %}
+            <li><a href="{{ url_for('main.serve_document', filename=doc) }}" target="_blank">Document {{ loop.index }}</a></li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 {% endblock %}

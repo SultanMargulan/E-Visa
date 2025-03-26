@@ -12,7 +12,7 @@
           <label for="country_id_1" class="form-label">Country 1</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-            <select id="country_id_1" name="country_id_1" class="form-control">
+            <select id="country_id_1" name="country_id_1" class="form-select">
               {% for country in countries %}
               <option value="{{ country.id }}">{{ country.name }}</option>
               {% endfor %}
@@ -23,7 +23,7 @@
           <label for="visa_type_1" class="form-label">Visa Type 1</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-card-text"></i></span>
-            <select id="visa_type_1" name="visa_type_1" class="form-control" required>
+            <select id="visa_type_1" name="visa_type_1" class="form-select" required>
               {% for visa_type in visa_types %}
               <option value="{{ visa_type }}">{{ visa_type }}</option>
               {% endfor %}
@@ -34,7 +34,7 @@
           <label for="country_id_2" class="form-label">Country 2</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-            <select id="country_id_2" name="country_id_2" class="form-control">
+            <select id="country_id_2" name="country_id_2" class="form-select">
               {% for country in countries %}
               <option value="{{ country.id }}">{{ country.name }}</option>
               {% endfor %}
@@ -45,7 +45,7 @@
           <label for="visa_type_2" class="form-label">Visa Type 2</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-card-text"></i></span>
-            <select id="visa_type_2" name="visa_type_2" class="form-control" required>
+            <select id="visa_type_2" name="visa_type_2" class="form-select" required>
               {% for visa_type in visa_types %}
               <option value="{{ visa_type }}">{{ visa_type }}</option>
               {% endfor %}
@@ -75,8 +75,8 @@
             </div>
           </div>
           <div class="col-lg-6">
-            <div class="card h-100 border-success">
-              <div class="card-header bg-success text-white">
+            <div class="card h-100 border-primary">
+              <div class="card-header bg-primary text-white">
                 <h3 class="h5 mb-0">{{ visa_info_2.country.name }} - {{ visa_info_2.visa_type }}</h3>
               </div>
               <div class="card-body">

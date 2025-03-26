@@ -6,7 +6,7 @@
             <div class="carousel-inner">
                 {% for image in country.images %}
                 <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
-                    <img src="{{ image.image_url }}" class="d-block w-100 img-fluid responsive-img" alt="...">
+                    <img src="{{ image.image_url }}" class="d-block w-100 fullscreen-img" alt="...">
                 </div>
                 {% endfor %}
             </div>
@@ -21,35 +21,61 @@
         </div>
         <p class="lead">Region: {{ country.region }}</p>
         <h2 class="mt-4">Visa Information</h2>
+        {% if visas %}
         <div class="card mt-4" style="max-width: 600px;">
             <div class="card-header">
-            <h5><i class="fas fa-passport"></i> {{ visas[0].visa_type }}</h5>
+                <h5><i class="fas fa-passport"></i> {{ visas[0].visa_type }}</h5>
             </div>
             <div class="card-body">
-            <p><i class="fas fa-file-alt"></i> {{ visas[0].requirements }}</p>
-            <p><i class="fas fa-clock"></i> {{ visas[0].processing_time }}</p>
-            <p><i class="fas fa-syringe"></i> {{ visas[0].vaccinations or "None" }}</p>
-            <a href="{{ visas[0].useful_links }}" class="btn btn-primary"><i class="fas fa-link"></i> More Info</a>
+                <p><i class="fas fa-file-alt"></i> {{ visas[0].requirements }}</p>
+                <p><i class="fas fa-clock"></i> {{ visas[0].processing_time }}</p>
+                <p><i class="fas fa-syringe"></i> {{ visas[0].vaccinations or "None" }}</p>
+                <a href="{{ visas[0].useful_links }}" class="btn btn-primary"><i class="fas fa-link"></i> More Info</a>
             </div>
         </div>
+        {% else %}
+        <p>No visa information available.</p>
+        {% endif %}
     </div>
 
     <style>
-        .responsive-img {
-            height: 80vh;
-            object-fit: cover;
+        .carousel-inner {
+            height: 70vh; /* Adjust as needed */
         }
-
-        @media (max-width: 768px) {
-            .responsive-img {
-                height: 50vh;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .responsive-img {
-                height: 40vh;
-            }
+        .carousel-item img {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
         }
     </style>
-    {% endblock %}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('.fullscreen-img');
+        const modalImage = document.getElementById('modalImage');
+        const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+
+        images.forEach(function(img) {
+            img.addEventListener('click', function() {
+                modalImage.src = this.src;
+                imageModal.show();
+            });
+        });
+    });
+    </script>
+
+    <!-- Modal for full-screen images -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Full Screen Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImage" src="" class="img-fluid" alt="Full Screen Image">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

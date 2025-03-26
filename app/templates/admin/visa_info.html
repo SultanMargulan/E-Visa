@@ -9,50 +9,52 @@
   <a href="{{ url_for('main.add_visa_info') }}" class="btn btn-primary mb-3">
     <i class="fas fa-plus"></i> Add Visa Info
   </a>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Country</th>
-        <th>Visa Type</th>
-        <th>Requirements</th>
-        <th>Processing Time</th>
-        <th>Cost</th>
-        <th>Vaccinations</th>
-        <th>Useful Links</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for visa_info in visa_info_list %}
-      <tr>
-        <td>{{ visa_info.id }}</td>
-        <td>{{ visa_info.country.name }}</td>
-        <td>{{ visa_info.visa_type }}</td>
-        <td>{{ visa_info.requirements }}</td>
-        <td>{{ visa_info.processing_time }}</td>
-        <td>{{ visa_info.cost }}</td>
-        <td>{{ visa_info.vaccinations or 'N/A' }}</td>
-        <td>
-          {% if visa_info.useful_links %}
-          <a href="{{ visa_info.useful_links }}" target="_blank">View Link</a>
-          {% else %}
-          N/A
-          {% endif %}
-        </td>
-        <td>
-          <a href="{{ url_for('main.edit_visa_info', visa_info_id=visa_info.id) }}" class="btn btn-warning btn-sm">
-            <i class="fas fa-edit"></i> Edit
-          </a>
-          <form method="POST" action="{{ url_for('main.delete_visa_info', visa_info_id=visa_info.id) }}" style="display:inline;">
-            <button type="submit" class="btn btn-danger btn-sm">
-              <i class="fas fa-trash"></i> Delete
-            </button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Country</th>
+          <th>Visa Type</th>
+          <th>Requirements</th>
+          <th>Processing Time</th>
+          <th>Cost</th>
+          <th>Vaccinations</th>
+          <th>Useful Links</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for visa_info in visa_info_list %}
+        <tr>
+          <td>{{ visa_info.id }}</td>
+          <td>{{ visa_info.country.name }}</td>
+          <td>{{ visa_info.visa_type }}</td>
+          <td>{{ visa_info.requirements }}</td>
+          <td>{{ visa_info.processing_time }}</td>
+          <td>{{ visa_info.cost }}</td>
+          <td>{{ visa_info.vaccinations or 'N/A' }}</td>
+          <td>
+            {% if visa_info.useful_links %}
+            <a href="{{ visa_info.useful_links }}" target="_blank" class="btn btn-link">View Link</a>
+            {% else %}
+            N/A
+            {% endif %}
+          </td>
+          <td>
+            <a href="{{ url_for('main.edit_visa_info', visa_info_id=visa_info.id) }}" class="btn btn-warning btn-sm">
+              <i class="fas fa-edit"></i> Edit
+            </a>
+            <form method="POST" action="{{ url_for('main.delete_visa_info', visa_info_id=visa_info.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this visa info?');">
+              <button type="submit" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

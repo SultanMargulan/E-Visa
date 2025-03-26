@@ -8,7 +8,7 @@
             <label for="country_id" class="form-label">Country</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-globe"></i></span>
-                <select id="country_id" name="country_id" class="form-control">
+                <select id="country_id" name="country_id" class="form-select">
                     {% for country in countries %}
                     <option value="{{ country.id }}">{{ country.name }}</option>
                     {% endfor %}
@@ -19,7 +19,7 @@
             <label for="visa_type" class="form-label">Visa Type</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-card-text"></i></span>
-                <select id="visa_type" name="visa_type" class="form-control" required>
+                <select id="visa_type" name="visa_type" class="form-select" required>
                     {% for visa_type in visa_types %}
                     <option value="{{ visa_type }}">{{ visa_type }}</option>
                     {% endfor %}

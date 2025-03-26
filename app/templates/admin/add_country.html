@@ -11,24 +11,33 @@
         <div class="row g-4">
           <div class="col-md-6">
             <label for="name" class="form-label">Country Name</label>
-            <div class="input-group">
+            <div class="input-group align-items-center">
               <span class="input-group-text"><i class="bi bi-tag"></i></span>
               <input type="text" id="name" name="name" class="form-control form-control-lg" required>
+              <div class="invalid-feedback">
+                Please enter a country name.
+              </div>
             </div>
           </div>
           <div class="col-md-6">
             <label for="region" class="form-label">Region</label>
-            <div class="input-group">
+            <div class="input-group align-items-center">
               <span class="input-group-text"><i class="bi bi-pin-map"></i></span>
               <input type="text" id="region" name="region" class="form-control form-control-lg" required>
+              <div class="invalid-feedback">
+                Please enter a region.
+              </div>
             </div>
           </div>
           <div class="col-12">
             <label for="image_url" class="form-label">Image URL</label>
-            <div class="input-group">
+            <div class="input-group align-items-center">
               <span class="input-group-text"><i class="bi bi-image"></i></span>
               <input type="url" id="image_url" name="image_url" class="form-control" 
                      placeholder="https://example.com/image.jpg" pattern="https://.*">
+              <div class="invalid-feedback">
+                Please enter a valid URL starting with https://.
+              </div>
             </div>
           </div>
         </div>
