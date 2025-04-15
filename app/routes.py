@@ -13,12 +13,36 @@ bp = Blueprint('main', __name__)
 
 @bp.route('/')
 def home():
-    popular_countries = db.session.query(Country).join(VisaApplication).group_by(Country.id).order_by(db.func.count(VisaApplication.id).desc()).limit(5).all()
-
+    popular_countries = db.session.query(Country).join(VisaApplication).group_by(Country.id)\
+                          .order_by(db.func.count(VisaApplication.id).desc()).limit(5).all()
     visa_types = ['Tourist', 'Work', 'Student']
     visa_count = VisaInfo.query.count()
+    return render_template('home.html', popular_countries=popular_countries,
+                           visa_types=visa_types, visa_count=visa_count)
 
-    return render_template('home.html', popular_countries=popular_countries, visa_types=visa_types, visa_count=visa_count)
+@bp.route('/feedback', methods=['POST'])
+def feedback():
+    name = request.form.get('name')
+    phone = request.form.get('phone')
+    # Process feedback (e.g., save to database or send email)
+    flash('Thank you for your request! We’ll contact you soon.', 'success')
+    return redirect(url_for('main.home'))
+
+@bp.route('/shengen-visa')
+def shengen_visa():
+    return render_template('shengen_visa.html')
+
+@bp.route('/about')
+def about():
+    return render_template('about.html')
+
+@bp.route('/blog')
+def blog():
+    return render_template('blog.html')
+
+@bp.route('/contacts')
+def contacts():
+    return render_template('contacts.html')
 
 # USER LOGIN AND REGISTRATION ROUTES
 @bp.route('/dashboard')
@@ -295,7 +319,6 @@ def admin_countries():
     countries = Country.query.all()
     return render_template('admin/countries.html', countries=countries)
 
-
 @bp.route('/admin/countries/add', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -303,15 +326,24 @@ def add_country():
     if request.method == 'POST':
         name = request.form.get('name')
         region = request.form.get('region')
-        image_url = request.form.get('image_url')  # Получаем URL изображения
+        description = request.form.get('description')
+        capital = request.form.get('capital')
+        year_established = request.form.get('year_established')
+        related_countries = request.form.get('related_countries')
+        image_url = request.form.get('image_url')  # URL for the main image
 
         if name and region:
-            # Создаём новую страну
-            new_country = Country(name=name, region=region)
+            new_country = Country(
+                name=name,
+                region=region,
+                description=description,
+                capital=capital,
+                year_established=int(year_established) if year_established else None,
+                related_countries=related_countries
+            )
             db.session.add(new_country)
             db.session.commit()
 
-            # Добавляем изображение, если указано
             if image_url:
                 new_image = CountryImage(country_id=new_country.id, image_url=image_url)
                 db.session.add(new_image)
@@ -329,22 +361,25 @@ def add_country():
 @admin_required
 def edit_country(country_id):
     country = Country.query.get_or_404(country_id)
-
     if request.method == 'POST':
         name = request.form.get('name')
         region = request.form.get('region')
-        image_urls = request.form.get('image_urls')  # Получаем ссылки через запятую
+        description = request.form.get('description')
+        capital = request.form.get('capital')
+        year_established = request.form.get('year_established')
+        related_countries = request.form.get('related_countries')
+        image_urls = request.form.get('image_urls')  # Comma-separated URLs
 
         if name and region:
             country.name = name
             country.region = region
+            country.description = description
+            country.capital = capital
+            country.year_established = int(year_established) if year_established else None
+            country.related_countries = related_countries
 
-            # Обновляем изображения
             if image_urls:
-                # Удаляем старые изображения
                 CountryImage.query.filter_by(country_id=country.id).delete()
-
-                # Добавляем новые изображения
                 for url in image_urls.split(','):
                     clean_url = url.strip()
                     if clean_url:
@@ -357,11 +392,8 @@ def edit_country(country_id):
         else:
             flash('Both name and region are required!', 'danger')
 
-    # Получаем текущие ссылки на изображения
     current_image_urls = ', '.join([image.image_url for image in country.images])
     return render_template('admin/edit_country.html', country=country, image_urls=current_image_urls)
-
-
 
 # Deleting a country
 @bp.route('/admin/countries/delete/<int:country_id>', methods=['POST'])

@@ -1,0 +1,217 @@
+{# shengen_visa.html #}
+{% extends "base.html" %}
+
+{% block title %}
+Shengen Visa for Citizens of Kazakhstan
+{% endblock %}
+
+{% block content %}
+<!-- Banner Section -->
+<section class="banner position-relative text-white" style="background: url('{{ url_for('static', filename='images/banner-bg.jpg') }}') no-repeat center/cover;">
+  <div class="gradient"></div>
+  <div class="container py-5" style="position: relative; z-index: 1;">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+      <ol class="breadcrumb mb-3">
+        <li class="breadcrumb-item"><a href="{{ url_for('main.home') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('main.countries') }}">Visas</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Shengen</li>
+      </ol>
+    </nav>
+    <h1 class="title-main">Shengen Visa for Citizens of Kazakhstan in 2024</h1>
+    <button class="btn btn-orang mt-3" onclick="window.location='#consultation';">Get a Consultation</button>
+  </div>
+</section>
+
+<!-- Quick Info Section -->
+<section class="py-4 bg-light">
+  <div class="container d-flex flex-wrap justify-content-around text-center">
+    <div class="m-2">
+      <div class="fw-bold">Stay Duration</div>
+      <div class="fs-5">Up to 5 years</div>
+    </div>
+    <div class="m-2">
+      <div class="fw-bold">Processing Time</div>
+      <div class="fs-5">7 to 15 days</div>
+    </div>
+    <div class="m-2">
+      <div class="fw-bold">Visa Cost</div>
+      <div class="fs-5">From 40,000 ₸</div>
+    </div>
+  </div>
+</section>
+
+<!-- Highlights/Advantages Section -->
+<section class="py-5">
+  <div class="container text-center">
+    <h2 class="title-middle mb-4">Why Apply for a Shengen Visa With Us</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card p-4 h-100">
+          <img src="{{ url_for('static', filename='images/icon-professional.svg') }}" alt="Professional" class="mx-auto" style="width:48px;">
+          <div class="mt-3 fw-bold">Professional Document Preparation</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-4 h-100">
+          <img src="{{ url_for('static', filename='images/icon-consultation.svg') }}" alt="Consultation" class="mx-auto" style="width:48px;">
+          <div class="mt-3 fw-bold">Comprehensive Consultations</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-4 h-100">
+          <img src="{{ url_for('static', filename='images/icon-strategy.svg') }}" alt="Strategy" class="mx-auto" style="width:48px;">
+          <div class="mt-3 fw-bold">Smart Submission Strategy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Overview Section -->
+<section class="container py-5">
+  <div class="row">
+    <div class="col-12 col-lg-10 mx-auto">
+      <h2 class="title-middle mb-3">How to Obtain a Visa to Europe</h2>
+      <p>
+        “Shengen” refers to a unified visa agreement among 27 European countries that have eliminated border controls among themselves. This allows free movement across most of the EU for short stays. As of 2024, nearly all EU member states are part of it, except for a few non-participating countries and the UK.
+      </p>
+      <p>
+        A European “multiple-entry” visa, valid for up to 90 days in a 180-day period, can be single-, double-, or multiple-entry. Its maximum validity can reach up to 5 years or just the period of your trip. Tourist, guest (private), and business are common categories.
+      </p>
+      <p>
+        Generally, you apply at the consulate of the country where you’ll begin and spend most of your trip. Providing a complete, accurate document package is crucial—missing documents may lead to refusal. At the consulate, you may also submit biometric data (fingerprints) and a digital photo, unless you’ve done so within the last 5 years. 
+      </p>
+      <p>
+        <strong>IMPORTANT:</strong> Citizens of Kazakhstan do require a Shengen Visa.
+      </p>
+      <hr class="my-4">
+      <h3>Common Types of Shengen Visas</h3>
+      <h5>Multiple-Entry Visa</h5>
+      <p>
+        A multiple-entry Shengen visa allows repeated entries to Europe within its validity (up to 5 years). However, within each 180-day window, your total stay cannot exceed 90 days. Frequent travelers—those owning property, studying, working, or visiting relatives—are more likely to apply for such a multi-visa.
+      </p>
+      <h5>Tourist Visa</h5>
+      <p>
+        A tourist visa (Type C) is issued to individuals traveling primarily for tourism, sightseeing, or leisure. Along with standard documents, you typically need a travel voucher, hotel booking, or invitation from a tour operator, plus a letter from your workplace confirming your leave if applicable.
+      </p>
+      <h5>Guest (Private) Visa</h5>
+      <p>
+        For visiting family or friends, you’ll need a formal invitation letter, passport details of your host, their proof of financial capability, and documents proving your relationship (if relevant). The rest of the paperwork remains similar to the standard list.
+      </p>
+      <h5>Business Visa</h5>
+      <p>
+        Apart from standard documents, a business visa typically requires an invitation letter from an EU-based company or partner, trade registry excerpts, or other formal proof of a legitimate business relationship.
+      </p>
+      <hr class="my-4">
+      <h3>Required Documents for a Shengen Visa</h3>
+      <ul>
+        <li>Passport valid at least 6 months past return date</li>
+        <li>Copy of passport ID page</li>
+        <li>2 color photos (3.5 x 4.5 cm)</li>
+        <li>Completed application form</li>
+        <li>Round-trip flight reservations or proof of travel route</li>
+        <li>Hotel booking or proof of accommodation</li>
+        <li>Bank statements showing sufficient funds</li>
+        <li>International health insurance (coverage of at least €30,000)</li>
+        <li>Additional supporting documents (marriage certificates, prior visa copies, etc.)</li>
+      </ul>
+      <p>
+        Please note, certain groups (minors, pensioners, entrepreneurs, etc.) may require additional documents, such as birth certificates, notarized parental permissions, or company registration forms.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="title-middle mb-4 text-center">Shengen Visa Costs</h2>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Type of Visa</th>
+            <th>Stay Duration</th>
+            <th>Processing Time</th>
+            <th>Service Fee</th>
+            <th>Consular Fee</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tourist</td>
+            <td>Up to 90 days</td>
+            <td>7–15 days</td>
+            <td>From 40,000 ₸</td>
+            <td>€80</td>
+            <td><button class="btn btn-sm btn-orang" onclick="window.location='#consultation';">Apply</button></td>
+          </tr>
+          <tr>
+            <td>Business</td>
+            <td>Up to 90 days</td>
+            <td>7–15 days</td>
+            <td>From 40,000 ₸</td>
+            <td>€80</td>
+            <td><button class="btn btn-sm btn-orang" onclick="window.location='#consultation';">Apply</button></td>
+          </tr>
+          <tr>
+            <td>Guest</td>
+            <td>Up to 90 days</td>
+            <td>7–15 days</td>
+            <td>From 40,000 ₸</td>
+            <td>€80</td>
+            <td><button class="btn btn-sm btn-orang" onclick="window.location='#consultation';">Apply</button></td>
+          </tr>
+          <tr>
+            <td>Student (National D Visa)</td>
+            <td>Over 90 days</td>
+            <td>7–15 days</td>
+            <td>From 60,000 ₸</td>
+            <td>€80</td>
+            <td><button class="btn btn-sm btn-orang" onclick="window.location='#consultation';">Apply</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Consultation Form -->
+<section class="py-5" id="consultation">
+  <div class="container">
+    <h3 class="title-middle text-center mb-3">Need Help Applying for a Visa?</h3>
+    <p class="text-center mb-4">Submit your request below and get a free consultation from our specialist.</p>
+    <form action="{{ url_for('main.feedback') }}" method="POST" class="d-flex flex-column flex-md-row justify-content-center gap-3">
+      <input type="text" name="name" placeholder="Your Name*" class="form-control" required>
+      <input type="text" name="phone" placeholder="Phone Number*" class="form-control" required>
+      <button type="submit" class="btn btn-orang">Call Me Back</button>
+    </form>
+  </div>
+</section>
+
+<!-- Additional Info Section -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="title-middle mb-4">Long-Term (National) Visa D</h2>
+    <p>
+      The term “student Shengen visa” or “working Shengen visa” does not exist in a strict sense. If you are admitted to a European university or have a job offer in the EU, you will need a national visa (Type D) for the specific country. The Shengen agreement covers short stays (Type C), whereas each EU state issues its own long-stay permits.
+    </p>
+    <hr>
+    <h3 class="title-middle mt-5">How Long Does It Take?</h3>
+    <p>
+      Typical processing times vary by country and the applicant’s completeness of documents. With professional assistance, many can finalize within 7–15 days. However, embassies reserve the right to request additional documents, possibly extending processing times.
+    </p>
+    <hr>
+    <h3 class="title-middle mt-5">Visa Costs</h3>
+    <p>
+      Fees differ by category. A tourist, guest, or business Shengen typically starts from 40,000 ₸ + €80 consular fee per passport. National (long-term) visas for study or work often cost more. Children under 6 are often exempt from consular fees; those aged 6–12 may pay 50%. Refunds are usually not issued if your application is denied.
+    </p>
+    <hr>
+    <h3 class="title-middle mt-5">Expert Assistance</h3>
+    <p>
+      Partnering with a visa specialist can reduce paperwork headaches. Our advisors know the exact requirements for each Schengen country, guide you in filling out forms, and handle hotel bookings, flights, and insurance. Once everything is in place, simply come to collect your visa on the scheduled date!
+    </p>
+  </div>
+</section>
+{% endblock %}

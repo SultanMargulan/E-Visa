@@ -20,6 +20,10 @@ class Country(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
     region = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    capital = db.Column(db.String(100), nullable=True)
+    year_established = db.Column(db.Integer, nullable=True)
+    related_countries = db.Column(db.Text, nullable=True)  # e.g., comma-separated list
 
 class CountryImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)

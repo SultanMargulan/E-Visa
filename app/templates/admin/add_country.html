@@ -1,4 +1,3 @@
-<!-- Enhanced add_country.html -->
 {% extends "base.html" %}
 {% block content %}
 <section class="container py-5">
@@ -29,15 +28,32 @@
               </div>
             </div>
           </div>
-          <div class="col-12">
-            <label for="image_url" class="form-label">Image URL</label>
-            <div class="input-group align-items-center">
-              <span class="input-group-text"><i class="bi bi-image"></i></span>
-              <input type="url" id="image_url" name="image_url" class="form-control" 
-                     placeholder="https://example.com/image.jpg" pattern="https://.*">
-              <div class="invalid-feedback">
-                Please enter a valid URL starting with https://.
-              </div>
+        </div>
+        <div class="mb-3 mt-4">
+          <label for="description" class="form-label">Country Description</label>
+          <textarea name="description" id="description" rows="4" class="form-control"></textarea>
+        </div>
+        <div class="row g-4 mb-4">
+          <div class="col-md-4">
+            <label for="capital" class="form-label">Capital</label>
+            <input type="text" id="capital" name="capital" class="form-control" placeholder="e.g., Astana">
+          </div>
+          <div class="col-md-4">
+            <label for="year_established" class="form-label">Year Established</label>
+            <input type="number" id="year_established" name="year_established" class="form-control" placeholder="e.g., 1991">
+          </div>
+          <div class="col-md-4">
+            <label for="related_countries" class="form-label">Related Countries</label>
+            <input type="text" id="related_countries" name="related_countries" class="form-control" placeholder="Comma-separated">
+          </div>
+        </div>
+        <div class="col-12">
+          <label for="image_url" class="form-label">Image URL</label>
+          <div class="input-group align-items-center">
+            <span class="input-group-text"><i class="bi bi-image"></i></span>
+            <input type="url" id="image_url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg" pattern="https://.*">
+            <div class="invalid-feedback">
+              Please enter a valid URL starting with https://.
             </div>
           </div>
         </div>

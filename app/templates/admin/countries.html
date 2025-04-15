@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 <div class="container my-5">
   <h1 class="mb-4">Countries</h1>
@@ -19,6 +18,9 @@
           <th>Images</th>
           <th>Name</th>
           <th>Region</th>
+          <th>Capital</th>
+          <th>Year Established</th>
+          <th>Description</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -39,6 +41,9 @@
             <a href="{{ url_for('main.country_detail', country_id=country.id) }}">{{ country.name }}</a>
           </td>
           <td>{{ country.region }}</td>
+          <td>{{ country.capital or 'N/A' }}</td>
+          <td>{{ country.year_established or 'N/A' }}</td>
+          <td>{{ country.description }}</td>
           <td>
             <div class="btn-group" role="group" aria-label="Actions">
               <a href="{{ url_for('main.edit_country', country_id=country.id) }}" class="btn btn-primary btn-sm me-2">

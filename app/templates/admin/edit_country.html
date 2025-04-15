@@ -12,6 +12,24 @@
             <input type="text" id="region" name="region" class="form-control" value="{{ country.region }}" required>
         </div>
         <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" rows="4" class="form-control" required>{{ country.description }}</textarea>
+        </div>
+        <div class="row g-4 mb-3">
+          <div class="col-md-4">
+            <label for="capital" class="form-label">Capital</label>
+            <input type="text" id="capital" name="capital" class="form-control" value="{{ country.capital }}">
+          </div>
+          <div class="col-md-4">
+            <label for="year_established" class="form-label">Year Established</label>
+            <input type="number" id="year_established" name="year_established" class="form-control" value="{{ country.year_established }}">
+          </div>
+          <div class="col-md-4">
+            <label for="related_countries" class="form-label">Related Countries</label>
+            <input type="text" id="related_countries" name="related_countries" class="form-control" value="{{ country.related_countries }}" placeholder="Comma-separated">
+          </div>
+        </div>
+        <div class="mb-3">
             <label for="image_urls" class="form-label">Image URLs (separate by commas)</label>
             <textarea id="image_urls" name="image_urls" class="form-control" rows="3" placeholder="Enter multiple image URLs separated by commas">{{ image_urls }}</textarea>
         </div>

@@ -1,71 +1,195 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="hero-section mb-5">
+<!-- Banner Section -->
+<section class="banner position-relative text-white" style="background: url({{ url_for('static', filename='images/banner-bg.jpg') }}) no-repeat center/cover;">
+  <div class="gradient"></div>
+  <div class="container py-5 text-center" style="position: relative; z-index: 1; max-width: 800px;">
+    <h1 class="title-main">Visa Support Center</h1>
+    <p class="description-main">Get your visa in as little as 3 days</p>
+    <div class="buttons d-flex flex-column flex-md-row justify-content-center gap-3">
+      <select id="countrySelect" class="form-select mb-2 mb-md-0" style="width: 100%; max-width: 400px;">
+        <option value="">Which country do you need a visa for?</option>
+        {% for country in popular_countries %}
+          <option value="{{ url_for('main.country_detail', country_id=country.id) }}">{{ country.name }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-orang" onclick="navigateToCountry()">Learn More</button>
+    </div>
+  </div>
+</section>
+
+<!-- Advantages Section -->
+<section class="advantage py-6">
   <div class="container">
-    <div class="row align-items-center">
-      <div class="col-lg-6">
-        <h1 class="display-4 fw-bold mb-4">Smart Visa Solutions for Global Citizens</h1>
-        <p class="lead mb-4">Streamline your visa applications with AI-powered assistance and real-time tracking.</p>
-        <div class="d-flex gap-3">
-          {% if current_user.is_authenticated %}
-            <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg px-5">
-              Go to Dashboard <i class="bi bi-arrow-right"></i>
-            </a>
-          {% else %}
-            <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg px-5">
-              Get Started
-            </a>
-            <a href="{{ url_for('main.countries') }}" class="btn btn-outline-primary btn-lg px-5">
-              Explore Countries
-            </a>
-          {% endif %}
-        </div>
+    <div class="row text-center">
+      <div class="col-md-3 col-6 mb-4 card p-3">
+        <div class="icon">100+</div>
+        <div class="text">Visas Issued</div>
       </div>
-      <div class="col-lg-6">
-        <img src="{{ url_for('static', filename='images/hero-illustration.svg') }}" alt="Travel Illustration" class="img-fluid">
+      <div class="col-md-3 col-6 mb-4 card p-3">
+        <div class="icon"><i class="bi bi-chat-square-text"></i></div>
+        <div class="text">Free Consultation</div>
+      </div>
+      <div class="col-md-3 col-6 mb-4 card p-3">
+        <div class="icon">3+</div>
+        <div class="text">Days Processing</div>
+      </div>
+      <div class="col-md-3 col-6 mb-4 card p-3">
+        <div class="icon">100%</div>
+        <div class="text">Quality Guarantee</div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="features-section mb-5">
+<!-- Popular Countries Section -->
+<section class="countries py-6">
   <div class="container">
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card h-100">
-          <div class="card-body">
-            <div class="feature-icon mb-3">
-              <i class="bi bi-clock-history display-4 text-primary"></i>
+    <h2 class="title text-center mb-4">Popular Countries</h2>
+    <div class="row">
+      {% for country in popular_countries %}
+        <div class="col-md-4 col-sm-6 mb-4">
+          <div class="card country h-100 hover-scale">
+            <img src="{{ country.images[0].image_url if country.images else url_for('static', filename='images/default-country.jpg') }}" class="card-img-top" alt="{{ country.name }}">
+            <div class="card-body">
+              <h5 class="description-main">{{ country.name }}</h5>
+              <p class="text">Price: from {{ country.visa_infos[0].cost if country.visa_infos else 'Contact us' }} USD</p>
+              <p class="text">Processing: {{ country.visa_infos[0].processing_time if country.visa_infos else 'Contact us' }}</p>
+              <a href="{{ url_for('main.country_detail', country_id=country.id) }}" class="link">Learn More</a>
             </div>
-            <h3 class="h4 mb-3">Fast Processing</h3>
-            <p class="text-muted">Average processing time reduced by 40% using our smart verification system.</p>
           </div>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100">
-          <div class="card-body">
-            <div class="feature-icon mb-3">
-              <i class="bi bi-shield-check display-4 text-success"></i>
-            </div>
-            <h3 class="h4 mb-3">Secure Platform</h3>
-            <p class="text-muted">Military-grade encryption and secure document handling for your peace of mind.</p>
-          </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Help Section -->
+<section class="help py-6 bg-light">
+  <div class="container text-center">
+    <h3 class="title-middle">Need Visa Assistance?</h3>
+    <p class="description">Submit a request for a free consultation</p>
+    <form action="{{ url_for('main.feedback') }}" method="POST" class="d-flex flex-column flex-md-row justify-content-center">
+      <input type="text" name="name" placeholder="Your Name*" class="form-control me-md-2 mb-2 mb-md-0" required autocomplete="name">
+      <input type="text" name="phone" placeholder="Phone Number*" class="form-control me-md-2 mb-2 mb-md-0" required autocomplete="tel">
+      <button type="submit" class="btn btn-orang">Call Me Back</button>
+    </form>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="about py-5">
+  <div class="container">
+    <h2 class="title">About E-Visa</h2>
+    <p class="description">We simplify the visa application process for you.</p>
+    <a href="{{ url_for('main.about') }}" class="link-arrow">Learn More <i class="bi bi-arrow-right"></i></a>
+  </div>
+</section>
+
+<!-- Partners Section -->
+<section class="partners py-5 bg-light">
+  <div class="container text-center">
+    <h3 class="title-mini">Our Partners</h3>
+    <div class="d-flex flex-wrap justify-content-center">
+      <img src="{{ url_for('static', filename='images/partner1.png') }}" alt="Partner 1" class="mx-3 mb-3">
+      <img src="{{ url_for('static', filename='images/partner2.png') }}" alt="Partner 2" class="mx-3 mb-3">
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works py-5">
+  <div class="container">
+    <h2 class="title text-center">How It Works</h2>
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="step text-center">
+          <h4>Step 1</h4>
+          <p>Submit Your Request</p>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card h-100">
-          <div class="card-body">
-            <div class="feature-icon mb-3">
-              <i class="bi bi-globe2 display-4 text-info"></i>
-            </div>
-            <h3 class="h4 mb-3">Global Coverage</h3>
-            <p class="text-muted">Access visa information for over 150 countries with real-time updates.</p>
+      <div class="col-md-4 mb-4">
+        <div class="step text-center">
+          <h4>Step 2</h4>
+          <p>Get a Consultation</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="step text-center">
+          <h4>Step 3</h4>
+          <p>Apply for Your Visa</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services Section -->
+<section class="services py-5 bg-light">
+  <div class="container">
+    <h2 class="title">Additional Services</h2>
+    <div class="row">
+      <div class="col-md-3 col-6 mb-4 card p-3">
+        <div class="service text-center">
+          <h4>Document Translation</h4>
+          <p>Professional translation services</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-4 card p-3">
+        <div class="service text-center">
+          <h4>Hotel Booking</h4>
+          <p>Assistance with accommodation</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Blog Section -->
+<section class="blog py-5">
+  <div class="container">
+    <h2 class="title">Blog</h2>
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="blog-post">
+          <h4>How to Get a US Visa</h4>
+          <p>Tips and tricks for success</p>
+          <a href="#" class="link-arrow">Read More <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQs Section -->
+<section class="faqs py-5 bg-light">
+  <div class="container">
+    <h2 class="title">Frequently Asked Questions</h2>
+    <div class="accordion" id="faqAccordion">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+            How long does it take to get a visa?
+          </button>
+        </h2>
+        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Processing times vary by country and visa type, typically 3-15 days.
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function navigateToCountry() {
+    const select = document.getElementById('countrySelect');
+    const url = select.value;
+    if (url) window.location.href = url;
+  }
+</script>
 {% endblock %}

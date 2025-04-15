@@ -1,81 +1,241 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="container mt-5">
-        <h1 class="display-4">{{ country.name }}</h1>
-        <div id="countryImages" class="carousel slide mb-4" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                {% for image in country.images %}
-                <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
-                    <img src="{{ image.image_url }}" class="d-block w-100 fullscreen-img" alt="...">
-                </div>
-                {% endfor %}
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#countryImages" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#countryImages" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
+<div class="container-fluid modern-country-detail p-4">
+  <!-- Header Section -->
+  <header class="mb-5 text-center">
+    <h1 class="display-3 fw-bold">{{ country.name }}</h1>
+  </header>
+  
+  <!-- Carousel Section -->
+  <div id="countryImages" class="carousel slide modern-carousel mb-5" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      {% for image in country.images %}
+      <div class="carousel-item {% if loop.first %}active{% endif %}">
+        <img src="{{ image.image_url }}" class="d-block w-100 carousel-img" alt="{{ country.name }} image">
+      </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#countryImages" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon modern-carousel-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#countryImages" data-bs-slide="next">
+      <span class="carousel-control-next-icon modern-carousel-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+
+  <!-- Main Content Row: Left for Detail, Right for Sidebar -->
+  <div class="row">
+    <!-- Left Column: Main Content -->
+    <div class="col-lg-8">
+      <!-- Region and Description -->
+      <p class="lead text-muted">Region: {{ country.region }}</p>
+      {% if country.description %}
+      <div class="card mb-5 modern-description shadow">
+        <div class="card-header bg-gradient-primary text-white">
+          <h3 class="mb-0 fs-4"><i class="bi bi-info-circle me-2"></i>About {{ country.name }}</h3>
         </div>
-        <p class="lead">Region: {{ country.region }}</p>
-        <h2 class="mt-4">Visa Information</h2>
+        <div class="card-body">
+          <p class="mb-0" style="line-height: 1.6;">{{ country.description }}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Visa Information Section -->
+      <section class="visa-info-section mb-5">
+        <h2 class="fs-3 fw-bold mb-3">Visa Information</h2>
         {% if visas %}
-        <div class="card mt-4" style="max-width: 600px;">
-            <div class="card-header">
-                <h5><i class="fas fa-passport"></i> {{ visas[0].visa_type }}</h5>
+          {% for visa in visas %}
+          <div class="card modern-visa-card mb-4 shadow-sm">
+            <div class="card-header bg-secondary text-white">
+              <h5 class="mb-0"><i class="fas fa-passport me-1"></i> {{ visa.visa_type }} Visa</h5>
             </div>
             <div class="card-body">
-                <p><i class="fas fa-file-alt"></i> {{ visas[0].requirements }}</p>
-                <p><i class="fas fa-clock"></i> {{ visas[0].processing_time }}</p>
-                <p><i class="fas fa-syringe"></i> {{ visas[0].vaccinations or "None" }}</p>
-                <a href="{{ visas[0].useful_links }}" class="btn btn-primary"><i class="fas fa-link"></i> More Info</a>
+              <p><strong>Requirements:</strong> {{ visa.requirements }}</p>
+              <p><strong>Processing Time:</strong> {{ visa.processing_time }}</p>
+              <p><strong>Cost:</strong> {{ visa.cost }} USD</p>
+              <p><strong>Vaccinations:</strong> {{ visa.vaccinations or "None" }}</p>
+              {% if visa.useful_links %}
+              <a href="{{ visa.useful_links }}" target="_blank" class="btn btn-primary modern-btn">
+                <i class="fas fa-link me-1"></i> More Info
+              </a>
+              {% endif %}
             </div>
-        </div>
+          </div>
+          {% endfor %}
         {% else %}
-        <p>No visa information available.</p>
+          <p class="text-muted">No visa information available.</p>
         {% endif %}
+      </section>
+
+      <!-- Extra Detailed Information Section -->
+      <section class="detailed-info mb-5">
+        <h2 class="fs-3 fw-bold mb-3">Travel Tips & Additional Info</h2>
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <p>
+              Here you can include extended details about {{ country.name }} – such as local travel tips, history, cultural highlights, or practical information for visitors.
+            </p>
+            <p>
+              For example, learn about the best time to visit, local cuisine to try, customs, and unique attractions.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
-
-    <style>
-        .carousel-inner {
-            height: 70vh; /* Adjust as needed */
-        }
-        .carousel-item img {
-            height: 100%;
-            width: 100%;
-            object-fit: contain;
-        }
-    </style>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const images = document.querySelectorAll('.fullscreen-img');
-        const modalImage = document.getElementById('modalImage');
-        const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
-
-        images.forEach(function(img) {
-            img.addEventListener('click', function() {
-                modalImage.src = this.src;
-                imageModal.show();
-            });
-        });
-    });
-    </script>
-
-    <!-- Modal for full-screen images -->
-    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="imageModalLabel">Full Screen Image</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <img id="modalImage" src="" class="img-fluid" alt="Full Screen Image">
-                </div>
-            </div>
+    
+    <!-- Right Column: Sidebar -->
+    <div class="col-lg-4">
+        <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-gradient-secondary text-white">
+            <h4 class="mb-0">Additional Information</h4>
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled">
+            <li><i class="bi bi-geo-alt me-2"></i> Capital: <strong>{{ country.capital or 'N/A' }}</strong></li>
+            <li><i class="bi bi-calendar-event me-2"></i> Year Established: <strong>{{ country.year_established or 'N/A' }}</strong></li>
+            <li><i class="bi bi-people me-2"></i> Related Countries: <strong>{{ country.related_countries or 'N/A' }}</strong></li>
+            <li><i class="bi bi-info-circle me-2"></i> More details on our travel guide.</li>
+            </ul>
+        </div>
+        </div>
+        <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-gradient-secondary text-white">
+            <h4 class="mb-0">Related Countries</h4>
+        </div>
+        <div class="card-body">
+            <!-- You can implement logic here to list related country profiles -->
+            <ul class="list-unstyled">
+            {% if country.related_countries %}
+                {% for rel in country.related_countries.split(',') %}
+                <li><a href="#">{{ rel.strip() }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li><a href="#">Country A</a></li>
+                <li><a href="#">Country B</a></li>
+                <li><a href="#">Country C</a></li>
+            {% endif %}
+            </ul>
+        </div>
         </div>
     </div>
+  
+  </div>
+</div>
+
+<!-- Modal for Full-Screen Images -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content modern-modal">
+      <div class="modal-header border-0 bg-gradient-primary text-white">
+        <h5 class="modal-title" id="imageModalLabel">Full Screen Image</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <img id="modalImage" src="" class="img-fluid w-100" alt="Full Screen Image">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Inline Styles Specific to Country Detail Page -->
+<style>
+  /* Wider layout with container-fluid */
+  .modern-country-detail {
+    max-width: 1400px;
+    margin: auto;
+    padding: 2rem;
+  }
+  /* Modern Carousel Enhancements */
+  .modern-carousel {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+  }
+  .carousel-inner {
+    height: 70vh;
+  }
+  .carousel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .modern-carousel-icon {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+  /* Description Card */
+  .modern-description .card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  }
+  .modern-description .card-body {
+    font-size: 1.1rem;
+    color: #333;
+    padding: 1.5rem;
+  }
+  /* Visa Card Styling */
+  .modern-visa-card .card-header {
+    border-radius: 0.75rem 0.75rem 0 0;
+    padding: 0.75rem 1rem;
+  }
+  .modern-visa-card .card-body {
+    font-size: 1rem;
+    color: #4f4f4f;
+    padding: 1rem;
+  }
+  .modern-btn {
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: background 0.3s ease;
+  }
+  .modern-btn:hover {
+    background: #2054a0; /* Darker shade */
+  }
+  /* Sidebar Cards */
+  .card.shadow-sm {
+    border: none;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .card-header.bg-gradient-secondary {
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    padding: 1rem;
+  }
+  .card-body {
+    padding: 1rem;
+  }
+  /* Detailed Info Section */
+  .detailed-info .card {
+    background-color: #f8f9fa;
+    border: none;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .detailed-info .card-body {
+    font-size: 1rem;
+    color: #333;
+  }
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .carousel-inner { height: 40vh; }
+    .modern-country-detail { padding: 1rem; }
+  }
+</style>
+
+<!-- Inline Script for Modal Behavior -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const images = document.querySelectorAll('.fullscreen-img');
+    const modalImage = document.getElementById('modalImage');
+    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+    images.forEach(function(img) {
+      img.addEventListener('click', function() {
+        modalImage.src = this.src;
+        imageModal.show();
+      });
+    });
+  });
+</script>
 {% endblock %}
