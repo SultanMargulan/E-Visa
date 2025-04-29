@@ -1,29 +1,171 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container py-5">
-  <h2 class="mb-4"><i class="bi bi-chat-dots"></i> Visa Assistant</h2>
+<div class="container py-4">
+  <h2 class="mb-4 d-flex align-items-center gap-2">
+    <i class="bi bi-chat-dots"></i>
+    <span>Visa Assistant</span>
+  </h2>
 
-  <!-- chat log -->
-  <div id="chat-box"
-       class="border rounded p-3 mb-3 bg-light"
-       style="height:380px; overflow-y:auto; font-size:0.95rem">
-    <!-- Initial welcome message -->
-    <div class="assistant-message my-3 p-3 bg-white rounded shadow-sm">
-      Welcome! I'm your visa assistant. How can I help you with visa-related questions today?
+  <!-- Chat container -->
+  <div class="chat-container">
+    <!-- Chat log -->
+    <div id="chat-box" class="chat-box mb-3">
+      <div class="assistant-message">
+        Welcome! I'm your visa assistant. How can I help you with visa-related questions today?
+      </div>
     </div>
-  </div>
 
-  <!-- input -->
-  <form id="chat-form" class="d-flex gap-2">
-    <input id="chat-input"
-           class="form-control"
-           placeholder="Ask a question about visas or travel…"
-           autocomplete="off" />
-    <button class="btn btn-primary" type="submit">
-      <i class="bi bi-send"></i> Send
-    </button>
-  </form>
+    <!-- Input form -->
+    <form id="chat-form" class="chat-input-form">
+      <div class="input-group">
+        <input id="chat-input"
+               class="form-control"
+               placeholder="Ask a question..."
+               autocomplete="off"
+               aria-label="Message" />
+        <button class="btn btn-primary px-3" type="submit">
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
+
+<!-- Add this style block after your existing styles -->
+<style>
+/* Chat Container Layout */
+.chat-container {
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 300px);
+}
+
+/* Chat Box Styling */
+.chat-box {
+  flex: 1;
+  overflow-y: auto;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Message Bubbles */
+.user-message,
+.assistant-message {
+  max-width: 85%;
+  margin: 0.5rem 0;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.user-message {
+  margin-left: auto;
+  background: var(--primary-color);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.assistant-message {
+  margin-right: auto;
+  background: white;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Input Form Styling */
+.chat-input-form {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding: 0.5rem 0;
+}
+
+.chat-input-form .input-group {
+  background: white;
+  border-radius: 24px;
+  padding: 0.25rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.chat-input-form .form-control {
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 24px;
+  font-size: 0.95rem;
+}
+
+.chat-input-form .form-control:focus {
+  box-shadow: none;
+}
+
+.chat-input-form .btn {
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.5rem;
+}
+
+.chat-input-form .btn i {
+  font-size: 1.2rem;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .chat-container {
+    height: calc(100vh - 300px);
+  }
+  
+  .user-message,
+  .assistant-message {
+    max-width: 90%;
+    font-size: 0.9rem;
+    padding: 0.7rem 1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .chat-input-form {
+    padding: 0.5rem;
+  }
+}
+
+/* Dark Mode Support */
+body.dark-mode .chat-box {
+  background: #2d3748;
+}
+
+body.dark-mode .assistant-message {
+  background: #3f495a;
+  color: #e2e8f0;
+}
+
+body.dark-mode .chat-input-form,
+body.dark-mode .chat-input-form .input-group {
+  background: #2d3748;
+}
+
+body.dark-mode .form-control {
+  background: #3f495a;
+  color: #e2e8f0;
+}
+
+body.dark-mode .form-control::placeholder {
+  color: #a0aec0;
+}
+</style>
 {% endblock %}
 
 {% block extra_js %}
@@ -64,10 +206,10 @@ function bubble(role, text="", streaming=false) {
   const div = document.createElement("div");
   
   if(role === "user") {
-    div.className = "user-message my-3 p-2 border-start border-4 border-primary ps-3";
+    div.className = "user-message";
     div.textContent = text;
   } else {
-    div.className = "assistant-message my-3 p-3 bg-white rounded shadow-sm";
+    div.className = "assistant-message";
     if(streaming) {
       div.dataset.stream = "yes";
       div.textContent = text;
@@ -140,61 +282,4 @@ form.addEventListener("submit", async (e) => {
   }
 });
 </script>
-
-<style>
-.user-message {
-  background: #f8f9fa;
-  font-weight: 500;
-}
-
-.assistant-message {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.assistant-message ul, 
-.assistant-message ol {
-  padding-left: 1.5rem;
-  margin: 0.75rem 0;
-}
-
-.assistant-message li {
-  margin: 0.5rem 0;
-  padding-left: 0.5rem;
-}
-
-.assistant-message p {
-  margin: 0.75rem 0;
-}
-
-.assistant-message strong {
-  color: #2c3e50;
-  font-weight: 600;
-}
-
-.assistant-message:hover {
-  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-  transition: box-shadow 0.2s ease;
-}
-
-#chat-box::-webkit-scrollbar {
-  width: 6px;
-}
-
-#chat-box::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-#chat-box::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 3px;
-}
-
-#chat-box::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
-</style>
 {% endblock %}

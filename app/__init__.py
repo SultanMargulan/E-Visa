@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 
@@ -42,6 +43,7 @@ def create_app():
     login_manager.init_app(app)
     mail.init_app(app)
     limiter.init_app(app)  # Initialize limiter with app
+    CORS(app)
     Migrate(app, db)
 
     # Register blueprints
@@ -50,6 +52,19 @@ def create_app():
     
     app.register_blueprint(bp)
     app.register_blueprint(chat_bp, url_prefix='/chat')  # Add prefix
+
+    @app.after_request
+    def add_corp(resp):
+        if resp.headers.get("Content-Type", "").startswith((
+            "application/javascript",
+            "text/css",
+            "font/",
+            "audio/",
+            "video/"
+        )):
+            resp.headers["Cross-Origin-Resource-Policy"] = "cross-origin"
+            resp.headers["X-Content-Type-Options"] = "nosniff"
+        return resp
 
     return app
 

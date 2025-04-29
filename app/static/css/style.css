@@ -913,37 +913,48 @@ body.dark-mode .visa-status-badge {
   }
 }
 
-body.dark-mode .advantage .text {
-  color: #f8f9fa !important;
-}
-body.dark-mode .country .text {
-  color: #adb5bd !important;
-}
-body.dark-mode .country .link {
-  color: #f16522 !important;
-}
-body.dark-mode .about {
-  background-color: #2d3748 !important;
-}
-body.dark-mode footer {
-  background-color: #212529 !important;
-  color: #f8f9fa !important;
-  opacity: 0.9;
-}
-body.dark-mode .text-muted {
-  color: #adb5bd !important;
-}
+/* Auth Forms Mobile Optimization */
+@media (max-width: 768px) {
+    .card {
+        margin: 1rem;
+        border-radius: 12px;
+    }
 
-/* ---- Custom section spacing ------------------------------------------------ */
-.py-6 {                         /* keep the same class name you already use  */
-  padding-top: 3.5rem !important;   /* ≈ 72 px – very close to visatime.kz     */
-  padding-bottom: 3.5rem !important;
-}
+    .card-header {
+        border-radius: 12px 12px 0 0 !important;
+    }
 
-/* Give even more air on large screens, like the reference site */
-@media (min-width: 992px) {
-  .py-6 {
-    padding-top: 4rem !important;   /* 96 px */
-    padding-bottom: 4rem !important;
-  }
+    .form-control {
+        font-size: 16px !important; /* Prevents iOS zoom */
+        height: 48px;
+    }
+
+    .input-group .btn {
+        height: 48px;
+        width: 48px;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .btn-primary,
+    .btn-success {
+        height: 48px;
+        font-size: 1rem;
+    }
+
+    .alert {
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Fix for phones in landscape mode */
+    @media (max-height: 600px) {
+        .min-vh-75 {
+            min-height: 75vh !important;
+            padding: 2rem 0;
+        }
+    }
 }
