@@ -13,12 +13,25 @@ bp = Blueprint('main', __name__)
 
 @bp.route('/')
 def home():
-    popular_countries = db.session.query(Country).join(VisaApplication).group_by(Country.id)\
-                          .order_by(db.func.count(VisaApplication.id).desc()).limit(5).all()
+    # Get popular countries (with applications)
+    popular_countries = db.session.query(Country)\
+                        .join(VisaApplication)\
+                        .group_by(Country.id)\
+                        .order_by(db.func.count(VisaApplication.id).desc())\
+                        .limit(5).all()
+    
+    # Get all other countries
+    popular_ids = [c.id for c in popular_countries]
+    other_countries = Country.query.filter(~Country.id.in_(popular_ids)).order_by(Country.name).all()
+    
     visa_types = ['Tourist', 'Work', 'Student']
     visa_count = VisaInfo.query.count()
-    return render_template('home.html', popular_countries=popular_countries,
-                           visa_types=visa_types, visa_count=visa_count)
+    
+    return render_template('home.html',
+                         popular_countries=popular_countries,
+                         other_countries=other_countries,
+                         visa_types=visa_types,
+                         visa_count=visa_count)
 
 @bp.route('/feedback', methods=['POST'])
 def feedback():

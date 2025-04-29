@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- HERO / Banner -->
 <section
   class="banner d-flex align-items-center text-white position-relative overflow-hidden rounded-xl shadow-xl"
   style="
@@ -21,17 +20,26 @@
       class="d-flex flex-column flex-md-row justify-content-center gap-3"
       style="max-width: 640px; margin: 0 auto"
     >
-      <select
-        id="countrySelect"
-        class="form-select flex-fill"
-        aria-label="Select country"
-      >
+      <select id="countrySelect" class="form-select flex-fill" aria-label="Select country">
         <option value="">Select a country…</option>
-        {% for country in popular_countries %}
-        <option value="{{ url_for('main.country_detail', country_id=country.id) }}">
-          {{ country.name }}
-        </option>
-        {% endfor %}
+        {% if popular_countries %}
+          <optgroup label="Popular Destinations">
+            {% for country in popular_countries %}
+            <option value="{{ url_for('main.country_detail', country_id=country.id) }}">
+              {{ country.name }}
+            </option>
+            {% endfor %}
+          </optgroup>
+        {% endif %}
+        {% if other_countries %}
+          <optgroup label="Other Countries">
+            {% for country in other_countries %}
+            <option value="{{ url_for('main.country_detail', country_id=country.id) }}">
+              {{ country.name }}
+            </option>
+            {% endfor %}
+          </optgroup>
+        {% endif %}
       </select>
 
       <button class="btn btn-orang flex-shrink-0" onclick="navigateToCountry()">
@@ -102,8 +110,7 @@
               Price:
               <strong
                 >{% if country.visa_infos %}{{ country.visa_infos[0].cost | int }}
-                USD{% else %}—{% endif %}</strong
-              >
+                USD{% else %}—{% endif %}</strong>
             </p>
             <p class="text mb-3">
               Processing:
