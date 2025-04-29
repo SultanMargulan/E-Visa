@@ -4,19 +4,23 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from twilio.rest import Client
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
+# Initialize extensions
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
-login_manager.login_view = 'login'
-login_manager.login_message_category = 'info'
-
 mail = Mail()
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["20/minute"],
+    storage_uri="memory://"
+)
 
 def create_app():
     app = Flask(__name__)
@@ -30,15 +34,22 @@ def create_app():
     app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
     app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  # write in .env
     app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # write in .env
-    mail.init_app(app)
+    app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024   # 10 MB total per request :contentReference[oaicite:2]{index=2}
 
+    # Initialize extensions with app
     db.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
+    mail.init_app(app)
+    limiter.init_app(app)  # Initialize limiter with app
     Migrate(app, db)
 
+    # Register blueprints
     from app.routes import bp
+    from app.chat_routes import bp as chat_bp
+    
     app.register_blueprint(bp)
+    app.register_blueprint(chat_bp, url_prefix='/chat')  # Add prefix
 
     return app
 

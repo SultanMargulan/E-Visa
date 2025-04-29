@@ -1,7 +1,7 @@
 import os
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session, send_from_directory, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session, send_from_directory, current_app, jsonify
 from flask_login import login_user, current_user, logout_user, login_required
-from app.models import User, Country, VisaApplication, VisaInfo, CountryImage
+from app.models import User, Country, VisaApplication, VisaInfo, CountryImage, BlogPost
 from app.forms import RegistrationForm, LoginForm, AddVisaApplicationForm
 from app import db, bcrypt
 from app.utils import generate_otp, send_otp_via_email, admin_required
@@ -36,19 +36,19 @@ def shengen_visa():
 def about():
     return render_template('about.html')
 
-@bp.route('/blog')
-def blog():
-    return render_template('blog.html')
-
-@bp.route('/contacts')
-def contacts():
-    return render_template('contacts.html')
-
 # USER LOGIN AND REGISTRATION ROUTES
 @bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', user=current_user)
+    q = VisaApplication.query.filter_by(user_id=current_user.id)
+    stats = {
+        'total_apps'   : q.count(),
+        'pending_apps' : q.filter_by(application_status='Pending').count(),
+        'approved_apps': q.filter_by(application_status='Approved').count(),
+        'rejected_apps': q.filter_by(application_status='Rejected').count(),
+        'recent_apps'  : q.order_by(VisaApplication.submitted_at.desc()).limit(5).all()
+    }
+    return render_template('dashboard.html', user=current_user, **stats)
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -214,48 +214,61 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@bp.route('/visa-status/add', methods=['GET', 'POST'])
+@bp.route('/visa-status/add', methods=['GET','POST'])
 @login_required
 def add_visa_application():
-    countries = [(country.id, country.name) for country in Country.query.all()]
+    if current_user.is_admin:
+        return redirect(url_for('main.admin_dashboard'))
+        
+    # Create form instance first
     form = AddVisaApplicationForm()
+    
+    # Set form choices
+    countries = [(c.id, c.name) for c in Country.query.all()]
     form.country_id.choices = countries
+    
+    visa_types = db.session.query(VisaInfo.visa_type).distinct().all()
+    form.visa_type.choices = [(v[0], v[0]) for v in visa_types]
 
     if form.validate_on_submit():
-        # Use form.documents.data instead of request.files
-        file = form.documents.data
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            upload_dir = current_app.config['UPLOAD_FOLDER']
-            # Ensure the upload directory exists
-            os.makedirs(upload_dir, exist_ok=True)
-            upload_path = os.path.join(upload_dir, filename)
-            
-            try:
-                file.save(upload_path)
-            except Exception as e:
-                flash(f'Error saving file: {e}', 'danger')
-                return redirect(url_for('main.add_visa_application'))
+        # Handle regular file uploads
+        saved_names = []
+        for f in form.documents.data:
+            if f and allowed_file(f.filename):
+                name = secure_filename(f"{datetime.utcnow().timestamp()}_{f.filename}")
+                path = os.path.join(current_app.config['UPLOAD_FOLDER'], name)
+                f.save(path)
+                saved_names.append(name)
+        
+        if not saved_names:
+            flash("No valid files selected.", "danger")
+            return redirect(request.url)
 
-            new_application = VisaApplication(
-                user_id=current_user.id,
-                country_id=form.country_id.data,
-                visa_type=form.visa_type.data,
-                passport_number=form.passport_number.data,
-                documents=json.dumps([filename]),
-                application_status='Pending'
-            )
-            db.session.add(new_application)
-            db.session.commit()
-            flash('Visa application submitted!', 'success')
-            return redirect(url_for('main.visa_status'))
-        else:
-            flash('Invalid file type or no file uploaded.', 'danger')
+        # Handle dynamic field data
+        extra_data = {}
+        schema = json.loads(request.form.get('extra_json') or "[]")
+        for field in schema:
+            val = request.form.get(field["name"])
+            if field["required"] and not val:
+                flash(f"{field['label']} is required", "danger")
+                return redirect(request.url)
+            extra_data[field["name"]] = val or None
 
-    # Display form errors to the user
-    for field, errors in form.errors.items():
-        for error in errors:
-            flash(f"{getattr(form, field).label.text}: {error}", 'danger')
+        # Create application with all data
+        new_app = VisaApplication(
+            user_id=current_user.id,
+            country_id=form.country_id.data,
+            visa_type=form.visa_type.data,
+            passport_number=form.passport_number.data,
+            documents=json.dumps(saved_names),
+            extra_data=json.dumps(extra_data),
+            application_status='Pending'
+        )
+        
+        db.session.add(new_app)
+        db.session.commit()
+        flash("Visa application submitted!", "success")
+        return redirect(url_for('main.visa_status'))
 
     return render_template('add_visa_application.html', form=form)
 
@@ -494,27 +507,21 @@ def admin_visa_info():
 @admin_required
 def add_visa_info():
     if request.method == 'POST':
-        country_id = request.form.get('country_id')
-        visa_type = request.form.get('visa_type')
-        requirements = request.form.get('requirements')
-        processing_time = request.form.get('processing_time')
-        cost = request.form.get('cost')
-        vaccinations = request.form.get('vaccinations')
-        useful_links = request.form.get('useful_links')
-
-        new_visa_info = VisaInfo(
-            country_id=country_id,
-            visa_type=visa_type,
-            requirements=requirements,
-            processing_time=processing_time,
-            cost=cost,
-            vaccinations=vaccinations,
-            useful_links=useful_links
+        visa_info = VisaInfo(
+            country_id=request.form['country_id'],
+            visa_type=request.form['visa_type'],
+            requirements=request.form['requirements'],
+            processing_time=request.form['processing_time'],
+            cost=float(request.form['cost']),
+            vaccinations=request.form['vaccinations'],
+            useful_links=request.form['useful_links'],
+            additional_fields=json.loads(request.form['additional_fields'])
         )
-        db.session.add(new_visa_info)
+        db.session.add(visa_info)
         db.session.commit()
         flash('Visa information added successfully', 'success')
         return redirect(url_for('main.admin_visa_info'))
+    
     countries = Country.query.all()
     return render_template('admin/add_visa_info.html', countries=countries)
 
@@ -524,20 +531,23 @@ def add_visa_info():
 def edit_visa_info(visa_info_id):
     visa_info = VisaInfo.query.get_or_404(visa_info_id)
     if request.method == 'POST':
-        visa_info.country_id = request.form.get('country_id')
-        visa_info.visa_type = request.form.get('visa_type')
-        visa_info.requirements = request.form.get('requirements')
-        visa_info.processing_time = request.form.get('processing_time')
-        visa_info.cost = request.form.get('cost')
-        visa_info.vaccinations = request.form.get('vaccinations')
-        visa_info.useful_links = request.form.get('useful_links')
-
+        visa_info.country_id = request.form['country_id']
+        visa_info.visa_type = request.form['visa_type']
+        visa_info.requirements = request.form['requirements']
+        visa_info.processing_time = request.form['processing_time']
+        visa_info.cost = float(request.form['cost'])
+        visa_info.vaccinations = request.form['vaccinations']
+        visa_info.useful_links = request.form['useful_links']
+        visa_info.additional_fields = json.loads(request.form['additional_fields'])
+        
         db.session.commit()
         flash('Visa information updated successfully', 'success')
         return redirect(url_for('main.admin_visa_info'))
 
     countries = Country.query.all()
-    return render_template('admin/edit_visa_info.html', visa_info=visa_info, countries=countries)
+    return render_template('admin/edit_visa_info.html', 
+                         visa_info=visa_info, 
+                         countries=countries)
 
 @bp.route('/admin/visa-info/delete/<int:visa_info_id>', methods=['POST'])
 @login_required
@@ -586,3 +596,96 @@ def visa_comparison():
         visa_info_2 = VisaInfo.query.filter_by(country_id=country_id_2, visa_type=visa_type_2).first()
 
     return render_template('visa_comparison.html', countries=countries, visa_types=visa_types, visa_info_1=visa_info_1, visa_info_2=visa_info_2)
+
+@bp.route('/blog')
+def blog():
+    page = request.args.get('page', 1, type=int)
+    category = request.args.get('category')
+    
+    query = BlogPost.query.order_by(BlogPost.created_at.desc())
+    if category:
+        query = query.filter_by(category=category)
+    
+    posts = query.paginate(page=page, per_page=9)
+    categories = db.session.query(BlogPost.category).distinct().all()
+    categories = [c[0] for c in categories if c[0]]
+    
+    return render_template('blog.html', 
+                         posts=posts,
+                         categories=categories,
+                         active_cat=category)
+
+@bp.route('/blog/<string:slug>')
+def blog_detail(slug):
+    post = BlogPost.query.filter_by(slug=slug).first_or_404()
+    return render_template('blog_detail.html', post=post)
+
+@bp.route('/admin/blog-posts')
+@login_required
+@admin_required
+def admin_blog_posts():
+    posts = BlogPost.query.order_by(BlogPost.created_at.desc()).all()
+    return render_template('admin/blog_posts.html', posts=posts)
+
+@bp.route('/admin/blog-posts/add', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def add_blog_post():
+    if request.method == 'POST':
+        post = BlogPost(
+            title=request.form['title'],
+            summary=request.form['summary'],
+            content=request.form['content'],
+            category=request.form['category'],
+            featured_img=request.form['featured_img']
+        )
+        db.session.add(post); db.session.commit()
+        flash('Post created!', 'success')
+        return redirect(url_for('main.admin_blog_posts'))
+    return render_template('admin/add_blog_post.html')
+
+@bp.route('/admin/blog-posts/edit/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_blog_post(post_id):
+    post = BlogPost.query.get_or_404(post_id)
+    if request.method == 'POST':
+        post.title        = request.form['title']
+        post.summary      = request.form['summary']
+        post.content      = request.form['content']
+        post.category     = request.form['category']
+        post.featured_img = request.form['featured_img']
+        db.session.commit()
+        flash('Post updated!', 'success')
+        return redirect(url_for('main.admin_blog_posts'))
+    return render_template('admin/edit_blog_post.html', post=post)
+
+@bp.route('/admin/blog-posts/delete/<int:post_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_blog_post(post_id):
+    post = BlogPost.query.get_or_404(post_id)
+    db.session.delete(post); db.session.commit()
+    flash('Post deleted', 'warning')
+    return redirect(url_for('main.admin_blog_posts'))
+
+@bp.route("/api/visa-requirements")
+def visa_requirements():
+    c_id   = request.args.get("country_id", type=int)
+    v_type = request.args.get("visa_type")
+    info   = VisaInfo.query.filter_by(country_id=c_id, visa_type=v_type).first_or_404()
+    return jsonify({
+        "processing_time": info.processing_time,
+        "cost"           : info.cost,
+        "requirements"   : info.additional_fields    # send the schema
+    })
+
+# Add this with other API routes
+@bp.route("/api/visa-types")
+def visa_types():
+    c_id = request.args.get("country_id", type=int)
+    q = VisaInfo.query
+    if c_id:
+        q = q.filter_by(country_id=c_id)
+    types = [v[0] for v in q.with_entities(VisaInfo.visa_type).distinct()]
+    return jsonify(types)

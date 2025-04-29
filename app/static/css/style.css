@@ -933,3 +933,17 @@ body.dark-mode footer {
 body.dark-mode .text-muted {
   color: #adb5bd !important;
 }
+
+/* ---- Custom section spacing ------------------------------------------------ */
+.py-6 {                         /* keep the same class name you already use  */
+  padding-top: 3.5rem !important;   /* ≈ 72 px – very close to visatime.kz     */
+  padding-bottom: 3.5rem !important;
+}
+
+/* Give even more air on large screens, like the reference site */
+@media (min-width: 992px) {
+  .py-6 {
+    padding-top: 4rem !important;   /* 96 px */
+    padding-bottom: 4rem !important;
+  }
+}

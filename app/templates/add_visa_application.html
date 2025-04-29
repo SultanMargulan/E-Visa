@@ -1,80 +1,281 @@
 {% extends "base.html" %}
+{% block extra_css %}
+<style>
+  .file-zone{border:2px dashed var(--primary-color);cursor:pointer;transition:0.2s}
+  .file-zone:hover{background:#f8fafc}
+  .file-name{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.progress-bar {
+  transition: width 0.3s ease;
+  cursor: default;
+}
+
+.progress-bar.active {
+  opacity: 1;
+}
+
+.progress-bar:not(.active) {
+  opacity: 0.5;
+}
+
+.step-content {
+  transition: opacity 0.3s ease;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
-  <div class="card shadow-lg mx-auto" style="max-width: 800px;">
-    <div class="card-header bg-gradient-primary text-white">
+  <div class="card shadow-lg mx-auto" style="max-width:860px">
+    <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
       <h2 class="h4 mb-0"><i class="bi bi-file-earmark-arrow-up me-2"></i>New Visa Application</h2>
+      <div id="meta"><!-- Dynamic badges will appear here --></div>
     </div>
+
     <div class="card-body p-4">
+      <!-- Step wizard -->
+      <ul id="wizard" class="progress progress-bar-striped mb-4" style="height:2rem;">
+        {% for s in ['Basics','Extras','Documents','Review'] %}
+        <li class="progress-bar {% if loop.index == 1 %}active{% endif %}" role="progressbar" style="width:25%" id="step{{loop.index}}">
+          <span class="d-none d-md-inline">{{ s }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+
       <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
         {{ form.hidden_tag() }}
-        
-        <div class="row g-4">
-          <div class="col-md-6">
-            <div class="form-floating">
-              {{ form.country_id(class="form-select") }}
-              <label>Select Country</label>
-            </div>
-          </div>
-          
-          <div class="col-md-6">
-            <div class="form-floating">
-              {{ form.visa_type(class="form-select") }}
-              <label>Visa Type</label>
-            </div>
-          </div>
+        <input type="hidden" name="extra_json">
 
-          <div class="col-12">
-            <div class="form-floating">
-              {{ form.passport_number(class="form-control", placeholder="Passport Number") }}
-              <label>Passport Number</label>
-              <small class="form-text text-muted">Format: A1234567</small>
+        <!-- Step 1: Basics -->
+        <div class="step-content" id="step1-content">
+          <div class="row g-4">
+            <div class="col-md-6 form-floating">
+              {{ form.country_id(class="form-select") }}<label>Country</label>
+            </div>
+            <div class="col-md-6 form-floating">
+              {{ form.visa_type(class="form-select") }}<label>Visa Type</label>
+            </div>
+            <div class="col-12 form-floating">
+              {{ form.passport_number(class="form-control") }}<label>Passport No.</label>
+              <small class="text-muted">Example: A1234567</small>
             </div>
           </div>
+        </div>
 
-          <div class="col-12">
-            <div class="file-upload-card border-dashed rounded-3 p-4">
-              <div class="text-center">
-                <i class="bi bi-cloud-upload fs-1 text-muted"></i>
-                <h6 class="my-3">Drag & Drop or Browse Files</h6>
-                {{ form.documents(class="form-control", id="documents", style="opacity: 0; height: 0;") }}
-                <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('documents').click()">
-                  Select Documents
-                </button>
-                <div id="file-list" class="mt-3 small text-muted"></div>
-              </div>
-            </div>
-          </div>
+        <!-- Step 2: Extra Fields -->
+        <div class="step-content d-none" id="step2-content">
+          <div id="extra-fields" class="row g-3"></div>
+        </div>
 
-          <div class="col-12 text-center">
-            <button type="submit" class="btn btn-primary px-5">
-              <i class="bi bi-send-check me-2"></i>Submit Application
-            </button>
+        <!-- Step 3: Documents -->
+        <div class="step-content d-none" id="step3-content">
+          <div id="zone" class="file-zone rounded-3 p-5 text-center">
+            <i class="bi bi-cloud-arrow-up fs-1 text-primary"></i>
+            <h6 class="mt-3">Drag &amp; drop or click to select PDF / JPG / PNG</h6>
+            {{ form.documents(class="form-control d-none", multiple=True, id="docs") }}
+            <div id="names" class="mt-3 small text-muted"></div>
           </div>
+        </div>
+
+        <!-- Step 4: Review -->
+        <div class="step-content d-none" id="step4-content">
+          <div class="review-summary">
+            <!-- Will be populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Navigation buttons -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="button" class="btn btn-secondary prev-step d-none">
+            <i class="bi bi-arrow-left me-2"></i>Previous
+          </button>
+          <button type="button" class="btn btn-primary next-step">
+            Next<i class="bi bi-arrow-right ms-2"></i>
+          </button>
+          {{ form.submit(class="btn btn-success d-none", id="submit-btn") }}
         </div>
       </form>
     </div>
   </div>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="container mt-3">
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-  document.getElementById('documents').addEventListener('change', function(e) {
-    const fileList = document.getElementById('file-list')
-    fileList.innerHTML = Array.from(e.target.files).map(file => 
-      `<div class="text-truncate"><i class="bi bi-file-earmark me-2"></i>${file.name}</div>`
-    ).join('')
-  })
+// Existing file upload code
+const inp  = document.getElementById("docs");
+const zone = document.getElementById("zone");
+const list = document.getElementById("names");
+zone.addEventListener("click", ()=>inp.click());
+inp.addEventListener("change", ()=>renderNames(inp.files));
+zone.addEventListener("dragover", e=>e.preventDefault());
+zone.addEventListener("drop",(e)=>{
+  e.preventDefault(); inp.files = e.dataTransfer.files; renderNames(inp.files);
+});
+function renderNames(files){
+  list.innerHTML = [...files].map(f=>`<div class="file-name"><i class="bi bi-file-earmark me-1"></i>${f.name}</div>`).join('');
+}
+
+// Dynamic fields handling
+async function loadSchema(){
+  const c = document.getElementById("country_id").value;
+  const v = document.getElementById("visa_type").value;
+  if(!c || !v) return;
+  
+  const res = await fetch(`/api/visa-requirements?country_id=${c}&visa_type=${v}`);
+  const data = await res.json();
+  renderExtras(data.requirements);
+  
+  // show processing-time & cost
+  document.getElementById("meta").innerHTML = `
+    <span class="badge bg-info me-2">${data.processing_time}</span>
+    <span class="badge bg-success">$${data.cost}</span>`;
+}
+
+async function refreshVisaTypes() {
+  const countrySelect = document.getElementById("country_id");
+  const visaSelect = document.getElementById("visa_type");
+  
+  if (!countrySelect.value) {
+    visaSelect.innerHTML = '<option value="">Select country first</option>';
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/visa-types?country_id=${countrySelect.value}`);
+    if (!res.ok) throw new Error(res.statusText);
+    
+    const types = await res.json();
+    
+    visaSelect.innerHTML = types.length 
+      ? types.map(v => `<option value="${v}">${v}</option>`).join('')
+      : '<option value="">No visa types available</option>';
+    
+    // Trigger schema reload
+    visaSelect.dispatchEvent(new Event('change'));
+  } catch (err) {
+    console.error('Failed to load visa types:', err);
+    visaSelect.innerHTML = '<option value="">Error loading visa types</option>';
+  }
+}
+
+function renderExtras(list){
+  const wrap = document.getElementById("extra-fields");
+  wrap.innerHTML = '';
+  
+  list.forEach(f => {
+    const col = document.createElement("div"); 
+    col.className = "col-md-6";
+    
+    if(f.type === 'file'){
+      col.innerHTML = `
+        <label class="form-label">${f.label}${f.required?'*':''}</label>
+        <input type="file" name="${f.name}" class="form-control" ${f.required?'required':''}>`;
+    } else {
+      col.innerHTML = `
+        <div class="form-floating">
+          <input class="form-control" name="${f.name}" placeholder="${f.label}"
+                 ${f.required?'required':''}>
+          <label>${f.label}</label>
+        </div>`;
+    }
+    wrap.appendChild(col);
+  });
+  
+  document.querySelector('input[name="extra_json"]').value = JSON.stringify(list);
+}
+
+document.getElementById("country_id").addEventListener("change", async () => {
+  await refreshVisaTypes();  // Wait for visa types to load
+  loadSchema();             // Then load schema for selected combination
+});
+
+// Step wizard handling
+let currentStep = 1;
+const totalSteps = 4;
+
+function updateProgress() {
+  // Update progress bar
+  for(let i = 1; i <= totalSteps; i++) {
+    const step = document.getElementById(`step${i}`);
+    if(i <= currentStep) {
+      step.classList.add('active');
+    } else {
+      step.classList.remove('active');
+    }
+  }
+
+  // Show/hide content
+  document.querySelectorAll('.step-content').forEach(content => {
+    content.classList.add('d-none');
+  });
+  document.getElementById(`step${currentStep}-content`).classList.remove('d-none');
+
+  // Update buttons
+  const prevBtn = document.querySelector('.prev-step');
+  const nextBtn = document.querySelector('.next-step');
+  const submitBtn = document.getElementById('submit-btn');
+
+  prevBtn.classList.toggle('d-none', currentStep === 1);
+  nextBtn.classList.toggle('d-none', currentStep === totalSteps);
+  submitBtn.classList.toggle('d-none', currentStep !== totalSteps);
+}
+
+function validateStep() {
+  let valid = true;
+  const currentContent = document.getElementById(`step${currentStep}-content`);
+  
+  currentContent.querySelectorAll('input, select').forEach(input => {
+    if(input.hasAttribute('required') && !input.value) {
+      valid = false;
+      input.classList.add('is-invalid');
+    }
+  });
+  
+  return valid;
+}
+
+function updateReview() {
+  const summary = document.querySelector('.review-summary');
+  const country = document.getElementById('country_id');
+  const visaType = document.getElementById('visa_type');
+  
+  summary.innerHTML = `
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Application Summary</h5>
+        <p><strong>Country:</strong> ${country.options[country.selectedIndex].text}</p>
+        <p><strong>Visa Type:</strong> ${visaType.value}</p>
+        <p><strong>Passport:</strong> ${document.getElementById('passport_number').value}</p>
+        <p><strong>Documents:</strong> ${document.getElementById('names').innerText}</p>
+      </div>
+    </div>
+  `;
+}
+
+document.querySelector('.next-step').addEventListener('click', () => {
+  if(validateStep()) {
+    currentStep++;
+    if(currentStep === totalSteps) {
+      updateReview();
+    }
+    updateProgress();
+  }
+});
+
+document.querySelector('.prev-step').addEventListener('click', () => {
+  currentStep--;
+  updateProgress();
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById("country_id").value) {
+    refreshVisaTypes();
+  }
+});
+
+// Initialize wizard
+updateProgress();
 </script>
 {% endblock %}

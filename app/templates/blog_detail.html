@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="container py-6" style="max-width: 860px;">
+  <h1 class="display-5 mb-3">{{ post.title }}</h1>
+  <p class="text-muted mb-4">
+    <i class="bi bi-clock me-1"></i>{{ post.created_at.strftime('%d %b %Y') }}
+    {% if post.category %}&nbsp;| {{ post.category }}{% endif %}
+  </p>
+  {% if post.featured_img %}
+  <img src="{{ post.featured_img }}" class="w-100 rounded-xl mb-4" alt="{{ post.title }}">
+  {% endif %}
+  <div class="markdown-body">{{ post.content|safe }}</div>  {# allow HTML/Markdown #}
+  <a href="{{ url_for('main.blog') }}" class="btn btn-outline-secondary mt-4">
+    <i class="bi bi-arrow-left"></i> Back to Blog
+  </a>
+</article>
+{% endblock %}

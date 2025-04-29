@@ -21,6 +21,7 @@
           <th>Cost</th>
           <th>Vaccinations</th>
           <th>Useful Links</th>
+          <th>Extra Fields</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -40,6 +41,11 @@
             {% else %}
             N/A
             {% endif %}
+          </td>
+          <td>
+            {% if visa_info.additional_fields %}
+              <span class="badge bg-info">{{ visa_info.additional_fields | length }}</span>
+            {% else %}—{% endif %}
           </td>
           <td>
             <a href="{{ url_for('main.edit_visa_info', visa_info_id=visa_info.id) }}" class="btn btn-warning btn-sm">

@@ -39,10 +39,97 @@
       <label for="useful_links" class="form-label">Useful Links</label>
       <textarea id="useful_links" name="useful_links" class="form-control"></textarea>
     </div>
+
+    <!-- Add the dynamic fields editor -->
+    <div class="mb-4">
+      <label class="form-label d-flex justify-content-between align-items-center">
+        <span>Additional Fields</span>
+        <button type="button" class="btn btn-sm btn-outline-primary" onclick="addField()">
+          <i class="fas fa-plus"></i> Add Field
+        </button>
+      </label>
+      
+      <div id="fields-container" class="border rounded p-3 bg-light">
+        <!-- Dynamic fields will be inserted here -->
+      </div>
+      
+      <input type="hidden" name="additional_fields" id="additional_fields">
+    </div>
+
     <div class="text-end">
       <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Submit</button>
       <a href="{{ url_for('main.admin_visa_info') }}" class="btn btn-secondary">Cancel</a>
     </div>
   </form>
 </div>
+
+<!-- Field template -->
+<template id="field-template">
+  <div class="field-item mb-3 border-bottom pb-3">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <label class="form-label">Field Name</label>
+        <input type="text" class="form-control field-name" placeholder="e.g., arrival_date">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Label</label>
+        <input type="text" class="form-control field-label" placeholder="e.g., Arrival Date">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Type</label>
+        <select class="form-select field-type">
+          <option value="text">Text</option>
+          <option value="date">Date</option>
+          <option value="file">File</option>
+          <option value="number">Number</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Required</label>
+        <div class="form-check mt-2">
+          <input type="checkbox" class="form-check-input field-required">
+          <label class="form-check-label">Yes</label>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removeField(this)">
+      <i class="fas fa-trash"></i> Remove
+    </button>
+  </div>
+</template>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addField() {
+  const template = document.getElementById('field-template');
+  const container = document.getElementById('fields-container');
+  container.appendChild(template.content.cloneNode(true));
+  updateJSON();
+}
+
+function removeField(btn) {
+  btn.closest('.field-item').remove();
+  updateJSON();
+}
+
+function updateJSON() {
+  const fields = [];
+  document.querySelectorAll('.field-item').forEach(item => {
+    fields.push({
+      name: item.querySelector('.field-name').value,
+      label: item.querySelector('.field-label').value,
+      type: item.querySelector('.field-type').value,
+      required: item.querySelector('.field-required').checked
+    });
+  });
+  document.getElementById('additional_fields').value = JSON.stringify(fields);
+}
+
+// Watch for changes in all field inputs
+document.getElementById('fields-container').addEventListener('change', updateJSON);
+
+// Add initial field on load
+document.addEventListener('DOMContentLoaded', () => addField());
+</script>
 {% endblock %}

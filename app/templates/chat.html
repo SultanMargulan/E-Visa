@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4"><i class="bi bi-chat-dots"></i> Visa Assistant</h2>
+
+  <!-- chat log -->
+  <div id="chat-box"
+       class="border rounded p-3 mb-3 bg-light"
+       style="height:380px; overflow-y:auto; font-size:0.95rem">
+    <!-- Initial welcome message -->
+    <div class="assistant-message my-3 p-3 bg-white rounded shadow-sm">
+      Welcome! I'm your visa assistant. How can I help you with visa-related questions today?
+    </div>
+  </div>
+
+  <!-- input -->
+  <form id="chat-form" class="d-flex gap-2">
+    <input id="chat-input"
+           class="form-control"
+           placeholder="Ask a question about visas or travel…"
+           autocomplete="off" />
+    <button class="btn btn-primary" type="submit">
+      <i class="bi bi-send"></i> Send
+    </button>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+// Initialize DOM elements and chat thread
+const box = document.getElementById("chat-box");
+const form = document.getElementById("chat-form");
+const inp = document.getElementById("chat-input");
+const thread = [{
+  role: "system",
+  content: "You are VisaBot, an expert on visas & travel paperwork only. Refuse other topics."
+}];
+
+// Marked configuration
+const markedOptions = {
+  breaks: true,
+  gfm: true,
+  sanitize: true
+};
+
+function formatResponse(text) {
+  // Add newline before numbered items
+  text = text.replace(/(\d+)\./g, '\n$1.');
+  // Add newline before the final note
+  text = text.replace(/(?<![\n])(Always|Note|Remember|Please)/g, '\n\n$1');
+  // Ensure proper spacing around list items
+  text = text.replace(/(\d+\.\s*[^:\n]*):([^\n])/g, '$1:\n$2');
+  // Convert to markdown
+  return marked.parse(text, {
+    ...markedOptions,
+    breaks: true,
+    gfm: true
+  });
+}
+
+function bubble(role, text="", streaming=false) {
+  const div = document.createElement("div");
+  
+  if(role === "user") {
+    div.className = "user-message my-3 p-2 border-start border-4 border-primary ps-3";
+    div.textContent = text;
+  } else {
+    div.className = "assistant-message my-3 p-3 bg-white rounded shadow-sm";
+    if(streaming) {
+      div.dataset.stream = "yes";
+      div.textContent = text;
+    } else {
+      div.innerHTML = formatResponse(text);
+    }
+  }
+  
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return div;  // Return the div for reference
+}
+
+// Handle form submission
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const q = inp.value.trim();
+  if(!q) return;
+  
+  // Disable input while processing
+  const btn = form.querySelector('button');
+  inp.disabled = btn.disabled = true;
+  
+  try {
+    bubble("user", q);
+    inp.value = "";
+    thread.push({role:"user", content:q});
+
+    // Create assistant bubble and keep reference
+    const aDiv = bubble("assistant", "", true);
+
+    const response = await fetch("/chat/api/chat", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({messages: thread})
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let answer = "";
+
+    while(true) {
+      const {value, done} = await reader.read();
+      if(done) break;
+      
+      const chunk = decoder.decode(value);
+      const matches = chunk.match(/data:(.+?)\n\n/g);
+      if(matches) {
+        matches.forEach(match => {
+          const data = match.replace(/data:|[\n\r]/g, '');
+          answer += data;
+          // Use the direct reference instead of querying
+          aDiv.innerHTML = formatResponse(answer);
+        });
+      }
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // Remove streaming flag and save to thread
+    delete aDiv.dataset.stream;
+    thread.push({role:"assistant", content:answer});
+  } catch(error) {
+    console.error("Error:", error);
+    bubble("assistant", "Sorry, there was an error processing your request.");
+  } finally {
+    inp.disabled = btn.disabled = false;
+    inp.focus();
+  }
+});
+</script>
+
+<style>
+.user-message {
+  background: #f8f9fa;
+  font-weight: 500;
+}
+
+.assistant-message {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.assistant-message ul, 
+.assistant-message ol {
+  padding-left: 1.5rem;
+  margin: 0.75rem 0;
+}
+
+.assistant-message li {
+  margin: 0.5rem 0;
+  padding-left: 0.5rem;
+}
+
+.assistant-message p {
+  margin: 0.75rem 0;
+}
+
+.assistant-message strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.assistant-message:hover {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  transition: box-shadow 0.2s ease;
+}
+
+#chat-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chat-box::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+#chat-box::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+#chat-box::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+</style>
+{% endblock %}

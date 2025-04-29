@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from datetime import datetime
 import pyotp
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import JSONB
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -42,6 +43,7 @@ class VisaInfo(db.Model):
     cost = db.Column(db.Float, nullable=False)
     vaccinations = db.Column(db.Text)
     useful_links = db.Column(db.Text)
+    additional_fields = db.Column(JSONB, default=list)
 
     # relationship with Country table
     country = relationship('Country', backref='visa_infos')
@@ -57,6 +59,29 @@ class VisaApplication(db.Model):
     submitted_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     notes = db.Column(db.Text, nullable=True)
+    extra_data = db.Column(JSONB)
 
     country = db.relationship('Country', backref='visa_applications')
     user = db.relationship('User', backref='visa_applications')
+
+from slugify import slugify
+from sqlalchemy import event
+
+class BlogPost(db.Model):
+    id            = db.Column(db.Integer, primary_key=True)
+    title         = db.Column(db.String(180), nullable=False)
+    slug          = db.Column(db.String(200), unique=True, index=True)
+    summary       = db.Column(db.String(300))
+    content       = db.Column(db.Text, nullable=False)
+    category      = db.Column(db.String(80))          # e.g. “Policies”
+    featured_img  = db.Column(db.String(255))
+    created_at    = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at    = db.Column(db.DateTime, default=datetime.utcnow,
+                              onupdate=datetime.utcnow)
+
+# auto-populate slug on insert / title change
+@event.listens_for(BlogPost, "before_insert")
+@event.listens_for(BlogPost, "before_update")
+def generate_slug(mapper, connect, target):
+    if not target.slug and target.title:
+        target.slug = slugify(target.title)           # “Visa Tips” → “visa-tips”
