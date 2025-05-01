@@ -28,5 +28,3 @@ python admin_user.py
 8. you are all set!
 
 (if you have problems with python commands, try typing python3 instead of python)
-
-credits to Sultan Margulan, Yernur Zhumanov
